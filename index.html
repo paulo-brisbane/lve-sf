@@ -1,92 +1,162 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sign in</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 420px;
+      font-family: system-ui, sans-serif;
+      max-width: 440px;
       margin: 10vh auto;
       padding: 24px;
       color: #222;
     }
-
+    .language {
+      text-align: right;
+      margin-bottom: 28px;
+    }
     label, input, button {
       display: block;
       width: 100%;
       box-sizing: border-box;
     }
-
-    input, button {
-      padding: 12px;
-      margin-top: 8px;
-      font-size: 1rem;
+    input, button, select {
+      font: inherit;
+      padding: 10px;
     }
-
-    button {
-      margin-top: 16px;
-      cursor: pointer;
-    }
-
-    #message {
-      min-height: 1.5em;
-      margin-top: 16px;
-    }
+    input { margin: 8px 0 16px; }
+    button { cursor: pointer; }
+    #message { margin-top: 16px; }
   </style>
 </head>
 <body>
-  <h1>Sign in</h1>
-  <p>Enter your email and we’ll send you a sign-in link. No password needed.</p>
+  <div class="language">
+    <label for="language" id="languageLabel" style="display:inline;"></label>
+    <select id="language" style="width:auto; display:inline-block;">
+      <option value="en">English</option>
+      <option value="pt">Português</option>
+      <option value="es">Español</option>
+    </select>
+  </div>
 
-  <form id="sign-in-form">
-    <label for="email">Email address</label>
-    <input id="email" name="email" type="email" autocomplete="email" required>
-    <button id="submit-button" type="submit">Send sign-in link</button>
+  <h1 id="title"></h1>
+  <p id="description"></p>
+
+  <form id="signInForm">
+    <label for="email" id="emailLabel"></label>
+    <input id="email" type="email" autocomplete="email" required>
+    <button id="submitButton" type="submit"></button>
   </form>
 
   <p id="message" role="status" aria-live="polite"></p>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://ybdvrgfrhfrznmeafqdz.supabase.co";
     const SUPABASE_KEY = "sb_publishable_n2Rbhasdsel-p60r3M1zEQ_igkqAlbb";
-    const SITE_URL = "https://paulo-brisbane.github.io/lve-sf/";
 
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const form = document.getElementById("sign-in-form");
+    const translations = {
+      en: {
+        language: "Language:",
+        title: "Sign in with an email link",
+        description: "Enter your email address and we’ll send you a sign-in link. No password needed.",
+        email: "Email address",
+        placeholder: "you@example.com",
+        submit: "Send sign-in link",
+        sending: "Sending…",
+        sent: "Check your email for the sign-in link.",
+        rateLimit: "Too many emails were requested. Please wait a while and try again.",
+        error: "Could not send the sign-in link. Please try again."
+      },
+      pt: {
+        language: "Idioma:",
+        title: "Entre com um link enviado por e-mail",
+        description: "Digite seu endereço de e-mail e enviaremos um link para entrar. Não é necessária uma senha.",
+        email: "Endereço de e-mail",
+        placeholder: "voce@exemplo.com",
+        submit: "Enviar link de acesso",
+        sending: "Enviando…",
+        sent: "Verifique seu e-mail para encontrar o link de acesso.",
+        rateLimit: "Muitos e-mails foram solicitados. Aguarde um pouco e tente novamente.",
+        error: "Não foi possível enviar o link. Tente novamente."
+      },
+      es: {
+        language: "Idioma:",
+        title: "Inicia sesión con un enlace por correo",
+        description: "Introduce tu correo electrónico y te enviaremos un enlace para iniciar sesión. No necesitas contraseña.",
+        email: "Correo electrónico",
+        placeholder: "tu@ejemplo.com",
+        submit: "Enviar enlace de acceso",
+        sending: "Enviando…",
+        sent: "Revisa tu correo para encontrar el enlace de acceso.",
+        rateLimit: "Se solicitaron demasiados correos. Espera un poco e inténtalo de nuevo.",
+        error: "No se pudo enviar el enlace. Inténtalo de nuevo."
+      }
+    };
+
+    const languageSelect = document.getElementById("language");
+    const form = document.getElementById("signInForm");
     const emailInput = document.getElementById("email");
-    const submitButton = document.getElementById("submit-button");
+    const submitButton = document.getElementById("submitButton");
     const message = document.getElementById("message");
+
+    let currentLanguage = localStorage.getItem("siteLanguage") || "en";
+
+    function setLanguage(language) {
+      currentLanguage = translations[language] ? language : "en";
+      localStorage.setItem("siteLanguage", currentLanguage);
+      languageSelect.value = currentLanguage;
+      document.documentElement.lang = currentLanguage;
+
+      const text = translations[currentLanguage];
+      document.getElementById("languageLabel").textContent = text.language;
+      document.getElementById("title").textContent = text.title;
+      document.getElementById("description").textContent = text.description;
+      document.getElementById("emailLabel").textContent = text.email;
+      emailInput.placeholder = text.placeholder;
+      submitButton.textContent = text.submit;
+    }
+
+    languageSelect.addEventListener("change", () => {
+      setLanguage(languageSelect.value);
+    });
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
+      const text = translations[currentLanguage];
+      message.textContent = "";
       submitButton.disabled = true;
-      message.textContent = "Sending sign-in link…";
+      submitButton.textContent = text.sending;
 
-      const { error } = await supabaseClient.auth.signInWithOtp({
+      const emailRedirectTo = new URL("welcome.html", window.location.href).toString();
+
+      const { error } = await supabase.auth.signInWithOtp({
         email: emailInput.value.trim(),
         options: {
-          emailRedirectTo: `${SITE_URL}welcome.html`
+          emailRedirectTo,
+          shouldCreateUser: true
         }
       });
 
       submitButton.disabled = false;
+      submitButton.textContent = text.submit;
 
       if (error) {
-        message.textContent = `Could not send the link: ${error.message}`;
+        console.error("Supabase sign-in error:", error);
+        message.textContent = /rate limit|too many/i.test(error.message)
+          ? text.rateLimit
+          : text.error;
         return;
       }
 
-      message.textContent =
-        "If this email can sign in, a link is on its way. Check your inbox.";
+      message.textContent = text.sent;
     });
+
+    setLanguage(currentLanguage);
   </script>
 </body>
 </html>
