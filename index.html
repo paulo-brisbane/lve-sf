@@ -6,10 +6,11 @@
   <title>Sign in</title>
   <style>
     body {
-      font-family: system-ui, sans-serif;
+      font-family: Arial, sans-serif;
       max-width: 420px;
-      margin: 4rem auto;
-      padding: 0 1rem;
+      margin: 10vh auto;
+      padding: 24px;
+      color: #222;
     }
 
     label, input, button {
@@ -19,97 +20,72 @@
     }
 
     input, button {
-      margin: 0.5rem 0 1rem;
-      padding: 0.75rem;
+      padding: 12px;
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 16px;
+      cursor: pointer;
     }
 
     #message {
       min-height: 1.5em;
+      margin-top: 16px;
     }
   </style>
 </head>
 <body>
   <h1>Sign in</h1>
+  <p>Enter your email and we’ll send you a sign-in link. No password needed.</p>
 
-  <form id="auth-form">
-    <label for="email">Email</label>
-    <input id="email" type="email" autocomplete="email" required>
-
-    <label for="password">Password</label>
-    <input
-      id="password"
-      type="password"
-      autocomplete="current-password"
-      minlength="6"
-      required
-    >
-
-    <button type="submit">Sign in</button>
-    <button type="button" id="signup-button">Create account</button>
+  <form id="sign-in-form">
+    <label for="email">Email address</label>
+    <input id="email" name="email" type="email" autocomplete="email" required>
+    <button id="submit-button" type="submit">Send sign-in link</button>
   </form>
 
-  <p id="message" role="status"></p>
+  <p id="message" role="status" aria-live="polite"></p>
 
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
     const SUPABASE_URL = "https://ybdvrgfrhfrznmeafqdz.supabase.co";
     const SUPABASE_KEY = "sb_publishable_n2Rbhasdsel-p60r3M1zEQ_igkqAlbb";
+    const SITE_URL = "https://paulo-brisbane.github.io/lve-sf/";
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-    const form = document.querySelector("#auth-form");
-    const message = document.querySelector("#message");
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    const form = document.getElementById("sign-in-form");
+    const emailInput = document.getElementById("email");
+    const submitButton = document.getElementById("submit-button");
+    const message = document.getElementById("message");
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      message.textContent = "Signing in…";
 
-      const email = document.querySelector("#email").value;
-      const password = document.querySelector("#password").value;
+      submitButton.disabled = true;
+      message.textContent = "Sending sign-in link…";
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) {
-        message.textContent = error.message;
-        return;
-      }
-
-      window.location.href = "welcome.html";
-    });
-
-    document.querySelector("#signup-button").addEventListener("click", async () => {
-      message.textContent = "Creating account…";
-
-      const email = document.querySelector("#email").value;
-      const password = document.querySelector("#password").value;
-
-      if (!email || !password) {
-        message.textContent = "Enter an email and password first.";
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+      const { error } = await supabaseClient.auth.signInWithOtp({
+        email: emailInput.value.trim(),
         options: {
-          emailRedirectTo: window.location.href
+          emailRedirectTo: `${SITE_URL}welcome.html`
         }
       });
 
+      submitButton.disabled = false;
+
       if (error) {
-        message.textContent = error.message;
+        message.textContent = `Could not send the link: ${error.message}`;
         return;
       }
 
-      if (data.session) {
-        window.location.href = "welcome.html";
-      } else {
-        message.textContent =
-          "Account created. Check your email to confirm it, then sign in.";
-      }
+      message.textContent =
+        "If this email can sign in, a link is on its way. Check your inbox.";
     });
   </script>
 </body>

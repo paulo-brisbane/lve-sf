@@ -6,46 +6,84 @@
   <title>Welcome</title>
   <style>
     body {
-      font-family: system-ui, sans-serif;
+      font-family: Arial, sans-serif;
       max-width: 600px;
-      margin: 4rem auto;
-      padding: 0 1rem;
+      margin: 10vh auto;
+      padding: 24px;
+      color: #222;
     }
 
     button {
-      padding: 0.75rem 1rem;
+      padding: 12px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    #message {
+      min-height: 1.5em;
     }
   </style>
 </head>
 <body>
-  <h1>Welcome!</h1>
-  <p>You are signed in.</p>
-  <button id="signout-button">Sign out</button>
+  <h1>Welcome</h1>
+  <p id="message" role="status" aria-live="polite">Checking your sign-in…</p>
+  <p id="email"></p>
+  <button id="sign-out-button" type="button" hidden>Sign out</button>
+  <p><a id="sign-in-link" href="./" hidden>Return to sign in</a></p>
 
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
     const SUPABASE_URL = "https://ybdvrgfrhfrznmeafqdz.supabase.co";
     const SUPABASE_KEY = "sb_publishable_n2Rbhasdsel-p60r3M1zEQ_igkqAlbb";
+    const SITE_URL = "https://paulo-brisbane.github.io/lve-sf/";
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const message = document.getElementById("message");
+    const emailElement = document.getElementById("email");
+    const signOutButton = document.getElementById("sign-out-button");
+    const signInLink = document.getElementById("sign-in-link");
 
-    if (!session) {
-      window.location.replace("index.html");
-    }
-
-    document.querySelector("#signout-button").addEventListener("click", async () => {
-      const { error } = await supabase.auth.signOut();
+    async function checkSession() {
+      const { data, error } = await supabaseClient.auth.getSession();
 
       if (error) {
-        alert(error.message);
+        message.textContent = `Could not check your sign-in: ${error.message}`;
+        signInLink.hidden = false;
         return;
       }
 
-      window.location.replace("index.html");
+      if (!data.session) {
+        message.textContent =
+          "You are not signed in. Use the link sent to your email, or request a new one.";
+        signInLink.hidden = false;
+        return;
+      }
+
+      message.textContent = "You’re signed in.";
+      emailElement.textContent = data.session.user.email || "";
+      signOutButton.hidden = false;
+    }
+
+    signOutButton.addEventListener("click", async () => {
+      signOutButton.disabled = true;
+      message.textContent = "Signing out…";
+
+      const { error } = await supabaseClient.auth.signOut();
+
+      if (error) {
+        message.textContent = `Could not sign out: ${error.message}`;
+        signOutButton.disabled = false;
+        return;
+      }
+
+      window.location.href = SITE_URL;
     });
+
+    checkSession();
   </script>
 </body>
 </html>
