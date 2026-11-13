@@ -4,85 +4,304 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Welcome</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 10vh auto;
-      padding: 24px;
-      color: #222;
-    }
-
-    button {
-      padding: 12px 18px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    #message {
-      min-height: 1.5em;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <h1>Welcome</h1>
-  <p id="message" role="status" aria-live="polite">Checking your sign-in…</p>
-  <p id="email"></p>
-  <button id="sign-out-button" type="button" hidden>Sign out</button>
-  <p><a id="sign-in-link" href="./" hidden>Return to sign in</a></p>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Home">
+      <span class="logo-placeholder" aria-hidden="true">LOGO</span>
+      <span class="brand-name">My Website</span>
+    </a>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <nav class="header-actions" aria-label="Page options">
+      <a id="profileLink" href="#profile"></a>
+
+      <label class="select-label" for="language"></label>
+      <select id="language" class="compact-select">
+        <option value="en">English</option>
+        <option value="pt">Português</option>
+        <option value="es">Español</option>
+      </select>
+
+      <label class="select-label" for="theme"></label>
+      <select id="theme" class="compact-select">
+        <option value="ocean">Ocean</option>
+        <option value="forest">Forest</option>
+        <option value="sunset">Sunset</option>
+        <option value="lavender">Lavender</option>
+        <option value="rose">Rose</option>
+        <option value="monochrome">Monochrome</option>
+        <option value="citrus">Citrus</option>
+        <option value="teal">Teal</option>
+        <option value="desert">Desert</option>
+        <option value="berry">Berry</option>
+      </select>
+
+      <button id="signOutButton" class="button button-secondary" type="button"></button>
+    </nav>
+  </header>
+
+  <main class="page-content">
+    <section class="card">
+      <h1 id="welcomeTitle"></h1>
+      <p id="statusMessage" class="status-message" role="status" aria-live="polite">
+        Checking your sign-in…
+      </p>
+      <p id="signedInAs" class="muted"></p>
+    </section>
+
+    <section id="profile" class="card">
+      <h2 id="profileTitle"></h2>
+      <p id="profileDescription" class="muted"></p>
+
+      <form id="profileForm">
+        <label id="nicknameLabel" for="nickname"></label>
+        <input
+          id="nickname"
+          name="nickname"
+          type="text"
+          maxlength="40"
+          autocomplete="nickname"
+        >
+        <button id="saveButton" class="button button-primary" type="submit"></button>
+      </form>
+
+      <p id="profileMessage" class="status-message" role="status" aria-live="polite"></p>
+    </section>
+
+    <p class="back-link">
+      <a id="backToLogin" href="login.html"></a>
+    </p>
+  </main>
+
   <script>
     const SUPABASE_URL = "https://ybdvrgfrhfrznmeafqdz.supabase.co";
     const SUPABASE_KEY = "sb_publishable_n2Rbhasdsel-p60r3M1zEQ_igkqAlbb";
-    const SITE_URL = "https://paulo-brisbane.github.io/lve-sf/";
+    const LOGIN_URL = "login.html";
 
     const supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_KEY
     );
 
-    const message = document.getElementById("message");
-    const emailElement = document.getElementById("email");
-    const signOutButton = document.getElementById("sign-out-button");
-    const signInLink = document.getElementById("sign-in-link");
+    const translations = {
+      en: {
+        title: "Welcome",
+        profile: "My profile",
+        language: "Language",
+        theme: "Style",
+        signOut: "Sign out",
+        checking: "Checking your sign-in…",
+        notSignedIn: "You are not signed in. Please sign in to continue.",
+        signInLink: "Go to sign in",
+        signedIn: "You’re signed in.",
+        signedInAs: "Signed in as",
+        profileTitle: "My profile",
+        profileDescription: "Choose a nickname to display on your profile.",
+        nickname: "Nickname",
+        save: "Save profile",
+        saving: "Saving…",
+        saved: "Your profile has been saved.",
+        loadError: "Could not load your profile. Please refresh and try again.",
+        saveError: "Could not save your profile. Please try again.",
+        signOutError: "Could not sign out. Please try again.",
+        signingOut: "Signing out…",
+        back: "Return to sign in"
+      },
+      pt: {
+        title: "Bem-vindo(a)",
+        profile: "Meu perfil",
+        language: "Idioma",
+        theme: "Estilo",
+        signOut: "Sair",
+        checking: "Verificando seu acesso…",
+        notSignedIn: "Você não está conectado(a). Entre para continuar.",
+        signInLink: "Ir para a página de acesso",
+        signedIn: "Você está conectado(a).",
+        signedInAs: "Conectado(a) como",
+        profileTitle: "Meu perfil",
+        profileDescription: "Escolha um apelido para exibir no seu perfil.",
+        nickname: "Apelido",
+        save: "Salvar perfil",
+        saving: "Salvando…",
+        saved: "Seu perfil foi salvo.",
+        loadError: "Não foi possível carregar seu perfil. Atualize a página e tente novamente.",
+        saveError: "Não foi possível salvar seu perfil. Tente novamente.",
+        signOutError: "Não foi possível sair. Tente novamente.",
+        signingOut: "Saindo…",
+        back: "Voltar para a página de acesso"
+      },
+      es: {
+        title: "Te damos la bienvenida",
+        profile: "Mi perfil",
+        language: "Idioma",
+        theme: "Estilo",
+        signOut: "Cerrar sesión",
+        checking: "Comprobando tu inicio de sesión…",
+        notSignedIn: "No has iniciado sesión. Inicia sesión para continuar.",
+        signInLink: "Ir a la página de inicio de sesión",
+        signedIn: "Has iniciado sesión.",
+        signedInAs: "Sesión iniciada como",
+        profileTitle: "Mi perfil",
+        profileDescription: "Elige un apodo para mostrar en tu perfil.",
+        nickname: "Apodo",
+        save: "Guardar perfil",
+        saving: "Guardando…",
+        saved: "Tu perfil se ha guardado.",
+        loadError: "No se pudo cargar tu perfil. Actualiza la página e inténtalo de nuevo.",
+        saveError: "No se pudo guardar tu perfil. Inténtalo de nuevo.",
+        signOutError: "No se pudo cerrar la sesión. Inténtalo de nuevo.",
+        signingOut: "Cerrando sesión…",
+        back: "Volver al inicio de sesión"
+      }
+    };
+
+    const languageSelect = document.getElementById("language");
+    const themeSelect = document.getElementById("theme");
+    const statusMessage = document.getElementById("statusMessage");
+    const profileMessage = document.getElementById("profileMessage");
+    const profileForm = document.getElementById("profileForm");
+    const nicknameInput = document.getElementById("nickname");
+    const saveButton = document.getElementById("saveButton");
+    const signOutButton = document.getElementById("signOutButton");
+
+    let currentLanguage = localStorage.getItem("siteLanguage") || "en";
+    let currentUser = null;
+
+    function setLanguage(language) {
+      currentLanguage = translations[language] ? language : "en";
+      localStorage.setItem("siteLanguage", currentLanguage);
+      languageSelect.value = currentLanguage;
+      document.documentElement.lang = currentLanguage;
+
+      const text = translations[currentLanguage];
+
+      document.title = text.title;
+      document.getElementById("welcomeTitle").textContent = text.title;
+      document.getElementById("profileLink").textContent = text.profile;
+      document.querySelector('label[for="language"]').textContent = text.language;
+      document.querySelector('label[for="theme"]').textContent = text.theme;
+      signOutButton.textContent = text.signOut;
+      document.getElementById("profileTitle").textContent = text.profileTitle;
+      document.getElementById("profileDescription").textContent = text.profileDescription;
+      document.getElementById("nicknameLabel").textContent = text.nickname;
+      saveButton.textContent = text.save;
+      document.getElementById("backToLogin").textContent = text.back;
+    }
+
+    function setTheme(theme) {
+      const validThemes = [
+        "ocean", "forest", "sunset", "lavender", "rose",
+        "monochrome", "citrus", "teal", "desert", "berry"
+      ];
+
+      const selectedTheme = validThemes.includes(theme) ? theme : "ocean";
+      document.documentElement.dataset.theme = selectedTheme;
+      themeSelect.value = selectedTheme;
+      localStorage.setItem("siteTheme", selectedTheme);
+    }
+
+    languageSelect.addEventListener("change", () => {
+      setLanguage(languageSelect.value);
+    });
+
+    themeSelect.addEventListener("change", () => {
+      setTheme(themeSelect.value);
+    });
 
     async function checkSession() {
+      const text = translations[currentLanguage];
       const { data, error } = await supabaseClient.auth.getSession();
 
       if (error) {
-        message.textContent = `Could not check your sign-in: ${error.message}`;
-        signInLink.hidden = false;
+        statusMessage.textContent = text.notSignedIn;
+        document.getElementById("backToLogin").hidden = false;
         return;
       }
 
       if (!data.session) {
-        message.textContent =
-          "You are not signed in. Use the link sent to your email, or request a new one.";
-        signInLink.hidden = false;
+        statusMessage.textContent = text.notSignedIn;
+        document.getElementById("backToLogin").hidden = false;
+        signOutButton.hidden = true;
+        profileForm.hidden = true;
         return;
       }
 
-      message.textContent = "You’re signed in.";
-      emailElement.textContent = data.session.user.email || "";
-      signOutButton.hidden = false;
+      currentUser = data.session.user;
+      statusMessage.textContent = text.signedIn;
+      document.getElementById("signedInAs").textContent =
+        `${text.signedInAs}: ${currentUser.email || ""}`;
+
+      const { data: profile, error: profileError } = await supabaseClient
+        .from("profiles")
+        .select("nickname")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+      if (profileError) {
+        profileMessage.textContent = text.loadError;
+        console.error("Profile load error:", profileError);
+        return;
+      }
+
+      nicknameInput.value = profile?.nickname || "";
     }
 
+    profileForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!currentUser) return;
+
+      const text = translations[currentLanguage];
+      const nickname = nicknameInput.value.trim();
+
+      profileMessage.textContent = "";
+      saveButton.disabled = true;
+      saveButton.textContent = text.saving;
+
+      const { error } = await supabaseClient
+        .from("profiles")
+        .upsert(
+          {
+            id: currentUser.id,
+            nickname,
+            updated_at: new Date().toISOString()
+          },
+          { onConflict: "id" }
+        );
+
+      saveButton.disabled = false;
+      saveButton.textContent = text.save;
+
+      if (error) {
+        console.error("Profile save error:", error);
+        profileMessage.textContent = text.saveError;
+        return;
+      }
+
+      profileMessage.textContent = text.saved;
+    });
+
     signOutButton.addEventListener("click", async () => {
+      const text = translations[currentLanguage];
+
       signOutButton.disabled = true;
-      message.textContent = "Signing out…";
+      statusMessage.textContent = text.signingOut;
 
       const { error } = await supabaseClient.auth.signOut();
 
       if (error) {
-        message.textContent = `Could not sign out: ${error.message}`;
+        statusMessage.textContent = text.signOutError;
         signOutButton.disabled = false;
         return;
       }
 
-      window.location.href = SITE_URL;
+      window.location.href = LOGIN_URL;
     });
 
+    setLanguage(currentLanguage);
+    setTheme(localStorage.getItem("siteTheme") || "ocean");
     checkSession();
   </script>
 </body>

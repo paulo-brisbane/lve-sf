@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Profile</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Home">
+      <span class="logo-placeholder" aria-hidden="true">LOGO</span>
+      <span id="brandName">My Website</span>
+    </a>
+
+    <nav class="header-actions" aria-label="Main navigation">
+      <a href="./" id="homeLink">Home</a>
+      <select id="language" aria-label="Language">
+        <option value="en">English</option>
+        <option value="pt">Português</option>
+        <option value="es">Español</option>
+      </select>
+      <select id="theme" aria-label="Colour theme">
+        <option value="ocean">Ocean</option>
+        <option value="forest">Forest</option>
+        <option value="sunset">Sunset</option>
+        <option value="lavender">Lavender</option>
+        <option value="rose">Rose</option>
+        <option value="citrus">Citrus</option>
+        <option value="slate">Slate</option>
+        <option value="mint">Mint</option>
+        <option value="berry">Berry</option>
+        <option value="sand">Sand</option>
+      </select>
+    </nav>
+  </header>
+
+  <main>
+    <section class="card">
+      <h1 id="title">My Profile</h1>
+      <p id="message" class="status" role="status" aria-live="polite"></p>
+      <p id="email"></p>
+
+      <form id="profileForm" hidden>
+        <label for="nickname" id="nicknameLabel">Nickname</label>
+        <input id="nickname" type="text" maxlength="40" required>
+        <button id="saveButton" type="submit">Save profile</button>
+      </form>
+
+      <p><a id="loginLink" href="login.html" hidden>Sign in</a></p>
+    </section>
+  </main>
+
+  <script>
+    const SUPABASE_URL = "https://ybdvrgfrhfrznmeafqdz.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_n2Rbhasdsel-p60r3M1zEQ_igkqAlbb";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const translations = {
+      en: {
+        title: "My Profile", home: "Home", nickname: "Nickname",
+        save: "Save profile", saving: "Saving…", saved: "Profile saved.",
+        loading: "Loading profile…", signedOut: "Please sign in to edit your profile.",
+        signIn: "Sign in", email: "Signed in as: "
+      },
+      pt: {
+        title: "Meu perfil", home: "Início", nickname: "Apelido",
+        save: "Salvar perfil", saving: "Salvando…", saved: "Perfil salvo.",
+        loading: "Carregando perfil…", signedOut: "Entre para editar seu perfil.",
+        signIn: "Entrar", email: "Conectado como: "
+      },
+      es: {
+        title: "Mi perfil", home: "Inicio", nickname: "Apodo",
+        save: "Guardar perfil", saving: "Guardando…", saved: "Perfil guardado.",
+        loading: "Cargando perfil…", signedOut: "Inicia sesión para editar tu perfil.",
+        signIn: "Iniciar sesión", email: "Sesión iniciada como: "
+      }
+    };
+
+    const languageSelect = document.getElementById("language");
+    const themeSelect = document.getElementById("theme");
+    const form = document.getElementById("profileForm");
+    const message = document.getElementById("message");
+    const nicknameInput = document.getElementById("nickname");
+    let userId = null;
+
+    function setLanguage(language) {
+      const lang = translations[language] ? language : "en";
+      const t = translations[lang];
+      localStorage.setItem("siteLanguage", lang);
+      languageSelect.value = lang;
+      document.documentElement.lang = lang;
+      document.getElementById("brandName").textContent = t.home === "Home" ? "My Website" : "Mi sitio";
+      document.getElementById("title").textContent = t.title;
+      document.getElementById("homeLink").textContent = t.home;
+      document.getElementById("nicknameLabel").textContent = t.nickname;
+      document.getElementById("saveButton").textContent = t.save;
+      document.getElementById("loginLink").textContent = t.signIn;
+    }
+
+    function setTheme(theme) {
+      const validThemes = ["ocean", "forest", "sunset", "lavender", "rose",
+        "citrus", "slate", "mint", "berry", "sand"];
+      const selected = validThemes.includes(theme) ? theme : "ocean";
+      document.body.dataset.theme = selected;
+      themeSelect.value = selected;
+      localStorage.setItem("siteTheme", selected);
+    }
+
+    languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
+    themeSelect.addEventListener("change", () => setTheme(themeSelect.value));
+
+    async function loadProfile() {
+      const lang = languageSelect.value;
+      const t = translations[lang];
+      message.textContent = t.loading;
+
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+
+      if (authError || !user) {
+        message.textContent = t.signedOut;
+        document.getElementById("loginLink").hidden = false;
+        return;
+      }
+
+      userId = user.id;
+      document.getElementById("email").textContent = t.email + (user.email || "");
+      form.hidden = false;
+
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("nickname")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (error) {
+        message.textContent = error.message;
+        return;
+      }
+
+      nicknameInput.value = data?.nickname || "";
+      message.textContent = "";
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!userId) return;
+
+      const t = translations[languageSelect.value];
+      const saveButton = document.getElementById("saveButton");
+      saveButton.disabled = true;
+      saveButton.textContent = t.saving;
+      message.textContent = "";
+
+      const { error } = await supabaseClient.from("profiles").upsert({
+        id: userId,
+        nickname: nicknameInput.value.trim(),
+        updated_at: new Date().toISOString()
+      });
+
+      saveButton.disabled = false;
+      saveButton.textContent = t.save;
+      message.textContent = error ? error.message : t.saved;
+    });
+
+    setTheme(localStorage.getItem("siteTheme") || "ocean");
+    setLanguage(localStorage.getItem("siteLanguage") || "en");
+    loadProfile();
+  </script>
+</body>
+</html>
