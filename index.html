@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="ocean">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,17 +26,16 @@
 
         <label>
           <span id="themeLabel">Colour style</span>
-          <select id="theme" aria-label="Colour style">
-            <option value="ocean">Ocean</option>
-            <option value="forest">Forest</option>
-            <option value="sunset">Sunset</option>
-            <option value="lavender">Lavender</option>
-            <option value="berry">Berry</option>
-            <option value="sand">Sand</option>
-            <option value="slate">Slate</option>
-            <option value="coral">Coral</option>
-            <option value="mint">Mint</option>
-            <option value="midnight">Midnight</option>
+          <select id="theme" aria-label="Colour style"><option value="ocean">Ocean</option>
+		<option value="forest">Forest</option>
+		<option value="sunset">Sunset</option>
+		<option value="lavender">Lavender</option>
+		<option value="earth">Earth</option>
+		<option value="berry">Berry</option>
+		<option value="sky">Sky</option>
+		<option value="sage">Sage</option>
+		<option value="coral">Coral</option>
+		<option value="monochrome">Monochrome</option>
           </select>
         </label>
       </div>
@@ -117,7 +116,7 @@
       const selectedTheme = validTheme ? theme : "ocean";
 
       themeSelect.value = selectedTheme;
-      document.body.dataset.theme = selectedTheme;
+      document.documentElement.dataset.theme = selectedTheme;
       localStorage.setItem("siteTheme", selectedTheme);
     }
 
