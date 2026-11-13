@@ -4,303 +4,142 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Welcome</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body data-theme="ocean">
   <header class="site-header">
-    <a class="brand" href="./" aria-label="Home">
+    <a class="brand" href="index.html">
       <span class="logo-placeholder" aria-hidden="true">LOGO</span>
-      <span class="brand-name">My Website</span>
+      <span>My Website</span>
     </a>
-
-    <nav class="header-actions" aria-label="Page options">
-      <a id="profileLink" href="#profile"></a>
-
-      <label class="select-label" for="language"></label>
-      <select id="language" class="compact-select">
-        <option value="en">English</option>
-        <option value="pt">Português</option>
-        <option value="es">Español</option>
-      </select>
-
-      <label class="select-label" for="theme"></label>
-      <select id="theme" class="compact-select">
-        <option value="ocean">Ocean</option>
-        <option value="forest">Forest</option>
-        <option value="sunset">Sunset</option>
-        <option value="lavender">Lavender</option>
-        <option value="rose">Rose</option>
-        <option value="monochrome">Monochrome</option>
-        <option value="citrus">Citrus</option>
-        <option value="teal">Teal</option>
-        <option value="desert">Desert</option>
-        <option value="berry">Berry</option>
-      </select>
-
-      <button id="signOutButton" class="button button-secondary" type="button"></button>
-    </nav>
+    <div class="preferences">
+      <label>
+        <span id="languageLabel">Language</span>
+        <select id="language">
+          <option value="en">English</option>
+          <option value="pt">Português</option>
+          <option value="es">Español</option>
+        </select>
+      </label>
+      <label>
+        <span id="themeLabel">Style</span>
+        <select id="theme">
+          <option value="ocean">Ocean</option>
+          <option value="forest">Forest</option>
+          <option value="sunset">Sunset</option>
+          <option value="lavender">Lavender</option>
+          <option value="berry">Berry</option>
+          <option value="sand">Sand</option>
+          <option value="slate">Slate</option>
+          <option value="coral">Coral</option>
+          <option value="mint">Mint</option>
+          <option value="midnight">Midnight</option>
+        </select>
+      </label>
+    </div>
   </header>
 
-  <main class="page-content">
+  <main class="page">
     <section class="card">
-      <h1 id="welcomeTitle"></h1>
-      <p id="statusMessage" class="status-message" role="status" aria-live="polite">
-        Checking your sign-in…
-      </p>
-      <p id="signedInAs" class="muted"></p>
+      <h1 id="title">Account</h1>
+      <p id="message" role="status" aria-live="polite">Checking your sign-in…</p>
+      <p id="email"></p>
+      <div class="button-row">
+        <a class="button secondary" id="profileLink" href="profile.html">My profile</a>
+        <button type="button" id="signOutButton" class="hidden">Sign out</button>
+      </div>
+      <p><a id="loginLink" href="login.html" class="hidden">Return to sign in</a></p>
     </section>
-
-    <section id="profile" class="card">
-      <h2 id="profileTitle"></h2>
-      <p id="profileDescription" class="muted"></p>
-
-      <form id="profileForm">
-        <label id="nicknameLabel" for="nickname"></label>
-        <input
-          id="nickname"
-          name="nickname"
-          type="text"
-          maxlength="40"
-          autocomplete="nickname"
-        >
-        <button id="saveButton" class="button button-primary" type="submit"></button>
-      </form>
-
-      <p id="profileMessage" class="status-message" role="status" aria-live="polite"></p>
-    </section>
-
-    <p class="back-link">
-      <a id="backToLogin" href="login.html"></a>
-    </p>
   </main>
 
   <script>
     const SUPABASE_URL = "https://ybdvrgfrhfrznmeafqdz.supabase.co";
     const SUPABASE_KEY = "sb_publishable_n2Rbhasdsel-p60r3M1zEQ_igkqAlbb";
-    const LOGIN_URL = "login.html";
-
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const translations = {
       en: {
-        title: "Welcome",
-        profile: "My profile",
-        language: "Language",
-        theme: "Style",
-        signOut: "Sign out",
-        checking: "Checking your sign-in…",
-        notSignedIn: "You are not signed in. Please sign in to continue.",
-        signInLink: "Go to sign in",
-        signedIn: "You’re signed in.",
-        signedInAs: "Signed in as",
-        profileTitle: "My profile",
-        profileDescription: "Choose a nickname to display on your profile.",
-        nickname: "Nickname",
-        save: "Save profile",
-        saving: "Saving…",
-        saved: "Your profile has been saved.",
-        loadError: "Could not load your profile. Please refresh and try again.",
-        saveError: "Could not save your profile. Please try again.",
-        signOutError: "Could not sign out. Please try again.",
-        signingOut: "Signing out…",
-        back: "Return to sign in"
+        language: "Language", theme: "Style", title: "Account", checking: "Checking your sign-in…",
+        signedIn: "You’re signed in.", notSignedIn: "You are not signed in.",
+        signOut: "Sign out", signingOut: "Signing out…", profile: "My profile",
+        login: "Return to sign in", error: "Could not complete the request. Please try again."
       },
       pt: {
-        title: "Bem-vindo(a)",
-        profile: "Meu perfil",
-        language: "Idioma",
-        theme: "Estilo",
-        signOut: "Sair",
-        checking: "Verificando seu acesso…",
-        notSignedIn: "Você não está conectado(a). Entre para continuar.",
-        signInLink: "Ir para a página de acesso",
-        signedIn: "Você está conectado(a).",
-        signedInAs: "Conectado(a) como",
-        profileTitle: "Meu perfil",
-        profileDescription: "Escolha um apelido para exibir no seu perfil.",
-        nickname: "Apelido",
-        save: "Salvar perfil",
-        saving: "Salvando…",
-        saved: "Seu perfil foi salvo.",
-        loadError: "Não foi possível carregar seu perfil. Atualize a página e tente novamente.",
-        saveError: "Não foi possível salvar seu perfil. Tente novamente.",
-        signOutError: "Não foi possível sair. Tente novamente.",
-        signingOut: "Saindo…",
-        back: "Voltar para a página de acesso"
+        language: "Idioma", theme: "Estilo", title: "Conta", checking: "Verificando seu acesso…",
+        signedIn: "Você está conectado.", notSignedIn: "Você não está conectado.",
+        signOut: "Sair", signingOut: "Saindo…", profile: "Meu perfil",
+        login: "Voltar para entrar", error: "Não foi possível concluir. Tente novamente."
       },
       es: {
-        title: "Te damos la bienvenida",
-        profile: "Mi perfil",
-        language: "Idioma",
-        theme: "Estilo",
-        signOut: "Cerrar sesión",
-        checking: "Comprobando tu inicio de sesión…",
-        notSignedIn: "No has iniciado sesión. Inicia sesión para continuar.",
-        signInLink: "Ir a la página de inicio de sesión",
-        signedIn: "Has iniciado sesión.",
-        signedInAs: "Sesión iniciada como",
-        profileTitle: "Mi perfil",
-        profileDescription: "Elige un apodo para mostrar en tu perfil.",
-        nickname: "Apodo",
-        save: "Guardar perfil",
-        saving: "Guardando…",
-        saved: "Tu perfil se ha guardado.",
-        loadError: "No se pudo cargar tu perfil. Actualiza la página e inténtalo de nuevo.",
-        saveError: "No se pudo guardar tu perfil. Inténtalo de nuevo.",
-        signOutError: "No se pudo cerrar la sesión. Inténtalo de nuevo.",
-        signingOut: "Cerrando sesión…",
-        back: "Volver al inicio de sesión"
+        language: "Idioma", theme: "Estilo", title: "Cuenta", checking: "Comprobando tu sesión…",
+        signedIn: "Has iniciado sesión.", notSignedIn: "No has iniciado sesión.",
+        signOut: "Cerrar sesión", signingOut: "Cerrando sesión…", profile: "Mi perfil",
+        login: "Volver a iniciar sesión", error: "No se pudo completar la solicitud. Inténtalo de nuevo."
       }
     };
 
+    const message = document.getElementById("message");
+    const signOutButton = document.getElementById("signOutButton");
+    const loginLink = document.getElementById("loginLink");
     const languageSelect = document.getElementById("language");
     const themeSelect = document.getElementById("theme");
-    const statusMessage = document.getElementById("statusMessage");
-    const profileMessage = document.getElementById("profileMessage");
-    const profileForm = document.getElementById("profileForm");
-    const nicknameInput = document.getElementById("nickname");
-    const saveButton = document.getElementById("saveButton");
-    const signOutButton = document.getElementById("signOutButton");
+    let language = localStorage.getItem("siteLanguage") || "en";
 
-    let currentLanguage = localStorage.getItem("siteLanguage") || "en";
-    let currentUser = null;
-
-    function setLanguage(language) {
-      currentLanguage = translations[language] ? language : "en";
-      localStorage.setItem("siteLanguage", currentLanguage);
-      languageSelect.value = currentLanguage;
-      document.documentElement.lang = currentLanguage;
-
-      const text = translations[currentLanguage];
-
-      document.title = text.title;
-      document.getElementById("welcomeTitle").textContent = text.title;
-      document.getElementById("profileLink").textContent = text.profile;
-      document.querySelector('label[for="language"]').textContent = text.language;
-      document.querySelector('label[for="theme"]').textContent = text.theme;
-      signOutButton.textContent = text.signOut;
-      document.getElementById("profileTitle").textContent = text.profileTitle;
-      document.getElementById("profileDescription").textContent = text.profileDescription;
-      document.getElementById("nicknameLabel").textContent = text.nickname;
-      saveButton.textContent = text.save;
-      document.getElementById("backToLogin").textContent = text.back;
+    function setLanguage(value) {
+      language = translations[value] ? value : "en";
+      localStorage.setItem("siteLanguage", language);
+      languageSelect.value = language;
+      document.documentElement.lang = language;
+      const t = translations[language];
+      document.getElementById("languageLabel").textContent = t.language;
+      document.getElementById("themeLabel").textContent = t.theme;
+      document.getElementById("title").textContent = t.title;
+      document.getElementById("profileLink").textContent = t.profile;
+      document.getElementById("loginLink").textContent = t.login;
+      signOutButton.textContent = t.signOut;
     }
 
     function setTheme(theme) {
-      const validThemes = [
-        "ocean", "forest", "sunset", "lavender", "rose",
-        "monochrome", "citrus", "teal", "desert", "berry"
-      ];
-
-      const selectedTheme = validThemes.includes(theme) ? theme : "ocean";
-      document.documentElement.dataset.theme = selectedTheme;
-      themeSelect.value = selectedTheme;
-      localStorage.setItem("siteTheme", selectedTheme);
+      const allowed = [...themeSelect.options].map(option => option.value);
+      const selected = allowed.includes(theme) ? theme : "ocean";
+      document.body.dataset.theme = selected;
+      themeSelect.value = selected;
+      localStorage.setItem("siteTheme", selected);
     }
 
-    languageSelect.addEventListener("change", () => {
-      setLanguage(languageSelect.value);
-    });
-
-    themeSelect.addEventListener("change", () => {
-      setTheme(themeSelect.value);
-    });
+    languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
+    themeSelect.addEventListener("change", () => setTheme(themeSelect.value));
 
     async function checkSession() {
-      const text = translations[currentLanguage];
       const { data, error } = await supabaseClient.auth.getSession();
 
-      if (error) {
-        statusMessage.textContent = text.notSignedIn;
-        document.getElementById("backToLogin").hidden = false;
+      if (error || !data.session) {
+        message.textContent = error ? translations[language].error : translations[language].notSignedIn;
+        loginLink.classList.remove("hidden");
         return;
       }
 
-      if (!data.session) {
-        statusMessage.textContent = text.notSignedIn;
-        document.getElementById("backToLogin").hidden = false;
-        signOutButton.hidden = true;
-        profileForm.hidden = true;
-        return;
-      }
-
-      currentUser = data.session.user;
-      statusMessage.textContent = text.signedIn;
-      document.getElementById("signedInAs").textContent =
-        `${text.signedInAs}: ${currentUser.email || ""}`;
-
-      const { data: profile, error: profileError } = await supabaseClient
-        .from("profiles")
-        .select("nickname")
-        .eq("id", currentUser.id)
-        .maybeSingle();
-
-      if (profileError) {
-        profileMessage.textContent = text.loadError;
-        console.error("Profile load error:", profileError);
-        return;
-      }
-
-      nicknameInput.value = profile?.nickname || "";
+      message.textContent = translations[language].signedIn;
+      document.getElementById("email").textContent = data.session.user.email || "";
+      signOutButton.classList.remove("hidden");
     }
 
-    profileForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      if (!currentUser) return;
-
-      const text = translations[currentLanguage];
-      const nickname = nicknameInput.value.trim();
-
-      profileMessage.textContent = "";
-      saveButton.disabled = true;
-      saveButton.textContent = text.saving;
-
-      const { error } = await supabaseClient
-        .from("profiles")
-        .upsert(
-          {
-            id: currentUser.id,
-            nickname,
-            updated_at: new Date().toISOString()
-          },
-          { onConflict: "id" }
-        );
-
-      saveButton.disabled = false;
-      saveButton.textContent = text.save;
-
-      if (error) {
-        console.error("Profile save error:", error);
-        profileMessage.textContent = text.saveError;
-        return;
-      }
-
-      profileMessage.textContent = text.saved;
-    });
-
     signOutButton.addEventListener("click", async () => {
-      const text = translations[currentLanguage];
-
       signOutButton.disabled = true;
-      statusMessage.textContent = text.signingOut;
+      message.textContent = translations[language].signingOut;
 
       const { error } = await supabaseClient.auth.signOut();
-
       if (error) {
-        statusMessage.textContent = text.signOutError;
+        message.textContent = translations[language].error;
         signOutButton.disabled = false;
         return;
       }
 
-      window.location.href = LOGIN_URL;
+      window.location.href = "index.html";
     });
 
-    setLanguage(currentLanguage);
+    setLanguage(language);
     setTheme(localStorage.getItem("siteTheme") || "ocean");
     checkSession();
   </script>

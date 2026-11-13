@@ -3,52 +3,61 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>My Profile</title>
+  <title>My profile</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body data-theme="ocean">
   <header class="site-header">
-    <a class="brand" href="./" aria-label="Home">
+    <a class="brand" href="index.html">
       <span class="logo-placeholder" aria-hidden="true">LOGO</span>
-      <span id="brandName">My Website</span>
+      <span>My Website</span>
     </a>
-
-    <nav class="header-actions" aria-label="Main navigation">
-      <a href="./" id="homeLink">Home</a>
-      <select id="language" aria-label="Language">
-        <option value="en">English</option>
-        <option value="pt">Português</option>
-        <option value="es">Español</option>
-      </select>
-      <select id="theme" aria-label="Colour theme">
-        <option value="ocean">Ocean</option>
-        <option value="forest">Forest</option>
-        <option value="sunset">Sunset</option>
-        <option value="lavender">Lavender</option>
-        <option value="rose">Rose</option>
-        <option value="citrus">Citrus</option>
-        <option value="slate">Slate</option>
-        <option value="mint">Mint</option>
-        <option value="berry">Berry</option>
-        <option value="sand">Sand</option>
-      </select>
-    </nav>
+    <div class="preferences">
+      <label>
+        <span id="languageLabel">Language</span>
+        <select id="language">
+          <option value="en">English</option>
+          <option value="pt">Português</option>
+          <option value="es">Español</option>
+        </select>
+      </label>
+      <label>
+        <span id="themeLabel">Style</span>
+        <select id="theme">
+          <option value="ocean">Ocean</option>
+          <option value="forest">Forest</option>
+          <option value="sunset">Sunset</option>
+          <option value="lavender">Lavender</option>
+          <option value="berry">Berry</option>
+          <option value="sand">Sand</option>
+          <option value="slate">Slate</option>
+          <option value="coral">Coral</option>
+          <option value="mint">Mint</option>
+          <option value="midnight">Midnight</option>
+        </select>
+      </label>
+    </div>
   </header>
 
-  <main>
+  <main class="page">
     <section class="card">
-      <h1 id="title">My Profile</h1>
-      <p id="message" class="status" role="status" aria-live="polite"></p>
-      <p id="email"></p>
+      <h1 id="title">My profile</h1>
+      <p id="message" role="status" aria-live="polite">Loading profile…</p>
 
-      <form id="profileForm" hidden>
-        <label for="nickname" id="nicknameLabel">Nickname</label>
-        <input id="nickname" type="text" maxlength="40" required>
-        <button id="saveButton" type="submit">Save profile</button>
+      <form id="profileForm" class="hidden">
+        <div class="field">
+          <label for="email" id="emailLabel">Email address</label>
+          <input id="email" type="email" readonly>
+        </div>
+        <div class="field">
+          <label for="nickname" id="nicknameLabel">Nickname</label>
+          <input id="nickname" type="text" maxlength="40">
+        </div>
+        <button type="submit" id="saveButton">Save profile</button>
       </form>
 
-      <p><a id="loginLink" href="login.html" hidden>Sign in</a></p>
+      <p class="footer-note"><a id="homeLink" href="index.html">Return to home</a></p>
     </section>
   </main>
 
@@ -59,50 +68,57 @@
 
     const translations = {
       en: {
-        title: "My Profile", home: "Home", nickname: "Nickname",
-        save: "Save profile", saving: "Saving…", saved: "Profile saved.",
-        loading: "Loading profile…", signedOut: "Please sign in to edit your profile.",
-        signIn: "Sign in", email: "Signed in as: "
+        language: "Language", theme: "Style", title: "My profile", loading: "Loading profile…",
+        email: "Email address", nickname: "Nickname", save: "Save profile", saving: "Saving…",
+        saved: "Profile saved.", signedOut: "Please sign in to view your profile.",
+        loadError: "Could not load your profile. Check that the profiles table and policies are set up.",
+        saveError: "Could not save your profile. Check the profiles table and its RLS policies.",
+        home: "Return to home"
       },
       pt: {
-        title: "Meu perfil", home: "Início", nickname: "Apelido",
-        save: "Salvar perfil", saving: "Salvando…", saved: "Perfil salvo.",
-        loading: "Carregando perfil…", signedOut: "Entre para editar seu perfil.",
-        signIn: "Entrar", email: "Conectado como: "
+        language: "Idioma", theme: "Estilo", title: "Meu perfil", loading: "Carregando perfil…",
+        email: "Endereço de e-mail", nickname: "Apelido", save: "Salvar perfil", saving: "Salvando…",
+        saved: "Perfil salvo.", signedOut: "Entre para ver seu perfil.",
+        loadError: "Não foi possível carregar o perfil. Verifique a tabela profiles e suas políticas.",
+        saveError: "Não foi possível salvar. Verifique a tabela profiles e suas políticas.",
+        home: "Voltar ao início"
       },
       es: {
-        title: "Mi perfil", home: "Inicio", nickname: "Apodo",
-        save: "Guardar perfil", saving: "Guardando…", saved: "Perfil guardado.",
-        loading: "Cargando perfil…", signedOut: "Inicia sesión para editar tu perfil.",
-        signIn: "Iniciar sesión", email: "Sesión iniciada como: "
+        language: "Idioma", theme: "Estilo", title: "Mi perfil", loading: "Cargando perfil…",
+        email: "Correo electrónico", nickname: "Apodo", save: "Guardar perfil", saving: "Guardando…",
+        saved: "Perfil guardado.", signedOut: "Inicia sesión para ver tu perfil.",
+        loadError: "No se pudo cargar el perfil. Comprueba la tabla profiles y sus políticas.",
+        saveError: "No se pudo guardar. Comprueba la tabla profiles y sus políticas.",
+        home: "Volver al inicio"
       }
     };
 
+    const message = document.getElementById("message");
+    const profileForm = document.getElementById("profileForm");
+    const saveButton = document.getElementById("saveButton");
     const languageSelect = document.getElementById("language");
     const themeSelect = document.getElementById("theme");
-    const form = document.getElementById("profileForm");
-    const message = document.getElementById("message");
-    const nicknameInput = document.getElementById("nickname");
-    let userId = null;
+    let language = localStorage.getItem("siteLanguage") || "en";
+    let userId;
 
-    function setLanguage(language) {
-      const lang = translations[language] ? language : "en";
-      const t = translations[lang];
-      localStorage.setItem("siteLanguage", lang);
-      languageSelect.value = lang;
-      document.documentElement.lang = lang;
-      document.getElementById("brandName").textContent = t.home === "Home" ? "My Website" : "Mi sitio";
+    function setLanguage(value) {
+      language = translations[value] ? value : "en";
+      localStorage.setItem("siteLanguage", language);
+      languageSelect.value = language;
+      document.documentElement.lang = language;
+      const t = translations[language];
+      document.getElementById("languageLabel").textContent = t.language;
+      document.getElementById("themeLabel").textContent = t.theme;
       document.getElementById("title").textContent = t.title;
-      document.getElementById("homeLink").textContent = t.home;
+      document.getElementById("emailLabel").textContent = t.email;
       document.getElementById("nicknameLabel").textContent = t.nickname;
-      document.getElementById("saveButton").textContent = t.save;
-      document.getElementById("loginLink").textContent = t.signIn;
+      document.getElementById("homeLink").textContent = t.home;
+      saveButton.textContent = t.save;
     }
 
     function setTheme(theme) {
-      const validThemes = ["ocean", "forest", "sunset", "lavender", "rose",
-        "citrus", "slate", "mint", "berry", "sand"];
-      const selected = validThemes.includes(theme) ? theme : "ocean";
+      const allowed = [...themeSelect.options].map(option => option.value);
+      const selected = allowed.includes(theme) ? theme : "ocean";
       document.body.dataset.theme = selected;
       themeSelect.value = selected;
       localStorage.setItem("siteTheme", selected);
@@ -112,21 +128,15 @@
     themeSelect.addEventListener("change", () => setTheme(themeSelect.value));
 
     async function loadProfile() {
-      const lang = languageSelect.value;
-      const t = translations[lang];
-      message.textContent = t.loading;
-
-      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-
-      if (authError || !user) {
-        message.textContent = t.signedOut;
-        document.getElementById("loginLink").hidden = false;
+      const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+      if (sessionError || !sessionData.session) {
+        message.textContent = translations[language].signedOut;
         return;
       }
 
+      const user = sessionData.session.user;
       userId = user.id;
-      document.getElementById("email").textContent = t.email + (user.email || "");
-      form.hidden = false;
+      document.getElementById("email").value = user.email || "";
 
       const { data, error } = await supabaseClient
         .from("profiles")
@@ -135,37 +145,44 @@
         .maybeSingle();
 
       if (error) {
-        message.textContent = error.message;
+        console.error("Profile load error:", error);
+        message.textContent = translations[language].loadError;
         return;
       }
 
-      nicknameInput.value = data?.nickname || "";
+      document.getElementById("nickname").value = data?.nickname || "";
       message.textContent = "";
+      profileForm.classList.remove("hidden");
     }
 
-    form.addEventListener("submit", async (event) => {
+    profileForm.addEventListener("submit", async event => {
       event.preventDefault();
       if (!userId) return;
 
-      const t = translations[languageSelect.value];
-      const saveButton = document.getElementById("saveButton");
+      const t = translations[language];
+      message.textContent = "";
       saveButton.disabled = true;
       saveButton.textContent = t.saving;
-      message.textContent = "";
 
       const { error } = await supabaseClient.from("profiles").upsert({
         id: userId,
-        nickname: nicknameInput.value.trim(),
+        nickname: document.getElementById("nickname").value.trim(),
         updated_at: new Date().toISOString()
       });
 
       saveButton.disabled = false;
       saveButton.textContent = t.save;
-      message.textContent = error ? error.message : t.saved;
+
+      if (error) {
+        console.error("Profile save error:", error);
+        message.textContent = t.saveError;
+        return;
+      }
+      message.textContent = t.saved;
     });
 
+    setLanguage(language);
     setTheme(localStorage.getItem("siteTheme") || "ocean");
-    setLanguage(localStorage.getItem("siteLanguage") || "en");
     loadProfile();
   </script>
 </body>
