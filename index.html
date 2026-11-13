@@ -3,81 +3,73 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1769aa">
   <title>Sign in</title>
-
+  <link rel="stylesheet" href="./styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      max-width: 440px;
-      margin: 10vh auto;
-      padding: 24px;
-      color: #222;
-    }
-
-    .language {
-      text-align: right;
-      margin-bottom: 28px;
-    }
-
-    label, input, button {
-      display: block;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    input, button, select {
-      font: inherit;
-      padding: 10px;
-    }
-
-    input {
-      margin: 8px 0 16px;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    button:disabled {
-      cursor: wait;
-    }
-
-    #message {
-      margin-top: 16px;
-    }
-  </style>
 </head>
-
 <body>
-  <div class="language">
-    <label for="language" id="languageLabel" style="display:inline;"></label>
-    <select id="language" style="width:auto; display:inline-block;">
-      <option value="en">English</option>
-      <option value="pt">Português</option>
-      <option value="es">Español</option>
-    </select>
-  </div>
+  <main>
+    <div class="preferences">
+      <div class="preference">
+        <label for="language" id="languageLabel">Language</label>
+        <select id="language">
+          <option value="en">English</option>
+          <option value="pt">Português</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
 
-  <h1 id="title"></h1>
-  <p id="description"></p>
+      <div class="preference">
+        <label for="theme" id="themeLabel">Colour style</label>
+        <select id="theme">
+          <option value="ocean">Ocean</option>
+          <option value="forest">Forest</option>
+          <option value="sunset">Sunset</option>
+          <option value="lavender">Lavender</option>
+          <option value="rose">Rose</option>
+          <option value="citrus">Citrus</option>
+          <option value="monochrome">Monochrome</option>
+          <option value="teal">Teal</option>
+          <option value="coral">Coral</option>
+          <option value="midnight">Midnight</option>
+        </select>
+      </div>
+    </div>
 
-  <form id="signInForm">
-    <label for="email" id="emailLabel"></label>
-    <input id="email" type="email" autocomplete="email" required>
-    <button id="submitButton" type="submit"></button>
-  </form>
+    <h1 id="title">Sign in with an email link</h1>
+    <p class="description" id="description">
+      Enter your email address and we’ll send you a sign-in link. No password needed.
+    </p>
 
-  <p id="message" role="status" aria-live="polite"></p>
+    <form id="signInForm">
+      <label for="email" id="emailLabel">Email address</label>
+      <input
+        id="email"
+        type="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+        required
+      >
+      <button id="submitButton" type="submit">Send sign-in link</button>
+    </form>
+
+    <p class="status" id="message" role="status" aria-live="polite"></p>
+  </main>
 
   <script>
     const SUPABASE_URL = "https://ybdvrgfrhfrznmeafqdz.supabase.co";
     const SUPABASE_KEY = "sb_publishable_n2Rbhasdsel-p60r3M1zEQ_igkqAlbb";
 
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
     const translations = {
       en: {
-        language: "Language:",
+        language: "Language",
+        theme: "Colour style",
         title: "Sign in with an email link",
         description: "Enter your email address and we’ll send you a sign-in link. No password needed.",
         email: "Email address",
@@ -89,9 +81,10 @@
         error: "Could not send the sign-in link. Please try again."
       },
       pt: {
-        language: "Idioma:",
+        language: "Idioma",
+        theme: "Estilo de cores",
         title: "Entre com um link enviado por e-mail",
-        description: "Digite seu endereço de e-mail e enviaremos um link para entrar. Não é necessária uma senha.",
+        description: "Digite seu e-mail e enviaremos um link para entrar. Não é necessária uma senha.",
         email: "Endereço de e-mail",
         placeholder: "voce@exemplo.com",
         submit: "Enviar link de acesso",
@@ -101,9 +94,10 @@
         error: "Não foi possível enviar o link. Tente novamente."
       },
       es: {
-        language: "Idioma:",
+        language: "Idioma",
+        theme: "Estilo de color",
         title: "Inicia sesión con un enlace por correo",
-        description: "Introduce tu correo electrónico y te enviaremos un enlace para iniciar sesión. No necesitas contraseña.",
+        description: "Introduce tu correo y te enviaremos un enlace para iniciar sesión. No necesitas contraseña.",
         email: "Correo electrónico",
         placeholder: "tu@ejemplo.com",
         submit: "Enviar enlace de acceso",
@@ -114,14 +108,20 @@
       }
     };
 
+    const themeNames = {
+      en: ["Ocean", "Forest", "Sunset", "Lavender", "Rose", "Citrus", "Monochrome", "Teal", "Coral", "Midnight"],
+      pt: ["Oceano", "Floresta", "Pôr do sol", "Lavanda", "Rosa", "Cítrico", "Monocromático", "Verde-azulado", "Coral", "Meia-noite"],
+      es: ["Océano", "Bosque", "Atardecer", "Lavanda", "Rosa", "Cítrico", "Monocromático", "Verde azulado", "Coral", "Medianoche"]
+    };
+
     const languageSelect = document.getElementById("language");
+    const themeSelect = document.getElementById("theme");
     const form = document.getElementById("signInForm");
     const emailInput = document.getElementById("email");
     const submitButton = document.getElementById("submitButton");
     const message = document.getElementById("message");
 
     let currentLanguage = localStorage.getItem("siteLanguage") || "en";
-    let supabaseClient;
 
     function setLanguage(language) {
       currentLanguage = translations[language] ? language : "en";
@@ -132,42 +132,47 @@
       const text = translations[currentLanguage];
       document.title = text.title;
       document.getElementById("languageLabel").textContent = text.language;
+      document.getElementById("themeLabel").textContent = text.theme;
       document.getElementById("title").textContent = text.title;
       document.getElementById("description").textContent = text.description;
       document.getElementById("emailLabel").textContent = text.email;
       emailInput.placeholder = text.placeholder;
-      submitButton.textContent = text.submit;
+
+      if (!submitButton.disabled) {
+        submitButton.textContent = text.submit;
+      }
+
+      [...themeSelect.options].forEach((option, index) => {
+        option.textContent = themeNames[currentLanguage][index];
+      });
+    }
+
+    function setTheme(theme) {
+      const allowedThemes = [...themeSelect.options].map((option) => option.value);
+      const selectedTheme = allowedThemes.includes(theme) ? theme : "ocean";
+
+      document.documentElement.dataset.theme = selectedTheme;
+      themeSelect.value = selectedTheme;
+      localStorage.setItem("siteTheme", selectedTheme);
     }
 
     languageSelect.addEventListener("change", () => {
       setLanguage(languageSelect.value);
-      message.textContent = "";
     });
 
-    try {
-      supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
-    } catch (error) {
-      console.error("Could not initialise Supabase:", error);
-      message.textContent = "Could not load the sign-in service. Please refresh the page.";
-    }
+    themeSelect.addEventListener("change", () => {
+      setTheme(themeSelect.value);
+    });
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-
-      if (!supabaseClient) {
-        return;
-      }
 
       const text = translations[currentLanguage];
       message.textContent = "";
       submitButton.disabled = true;
       submitButton.textContent = text.sending;
 
-      const emailRedirectTo =
-        new URL("welcome.html", window.location.href).toString();
+      const emailRedirectTo = new URL("welcome.html", window.location.href).toString();
 
       try {
         const { error } = await supabaseClient.auth.signInWithOtp({
@@ -180,11 +185,9 @@
 
         if (error) {
           console.error("Supabase sign-in error:", error);
-
           message.textContent = /rate limit|too many/i.test(error.message)
             ? text.rateLimit
             : text.error;
-
           return;
         }
 
@@ -199,6 +202,7 @@
     });
 
     setLanguage(currentLanguage);
+    setTheme(localStorage.getItem("siteTheme") || "ocean");
   </script>
 </body>
 </html>
