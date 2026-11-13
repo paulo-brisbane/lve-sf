@@ -6,7 +6,7 @@
   <title>Home</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
-<body data-theme="ocean">
+<body>
   <header class="site-header">
     <a class="brand" href="./" aria-label="Home">
       <span class="logo-placeholder" aria-hidden="true">LOGO</span>
@@ -26,16 +26,17 @@
 
         <label>
           <span id="themeLabel">Colour style</span>
-          <select id="theme" aria-label="Colour style"><option value="ocean">Ocean</option>
-		<option value="forest">Forest</option>
-		<option value="sunset">Sunset</option>
-		<option value="lavender">Lavender</option>
-		<option value="earth">Earth</option>
-		<option value="berry">Berry</option>
-		<option value="sky">Sky</option>
-		<option value="sage">Sage</option>
-		<option value="coral">Coral</option>
-		<option value="monochrome">Monochrome</option>
+          <select id="theme" aria-label="Colour style">
+            <option value="ocean">Ocean</option>
+            <option value="forest">Forest</option>
+            <option value="sunset">Sunset</option>
+            <option value="lavender">Lavender</option>
+            <option value="earth">Earth</option>
+            <option value="berry">Berry</option>
+            <option value="sky">Sky</option>
+            <option value="sage">Sage</option>
+            <option value="coral">Coral</option>
+            <option value="monochrome">Monochrome</option>
           </select>
         </label>
       </div>
@@ -64,8 +65,7 @@
         login: "Login",
         eyebrow: "HOME",
         heading: "Welcome",
-        description:
-          "Welcome to your website. Use the selectors above to choose your language and colour style."
+        description: "Welcome to your website. Use the selectors above to choose your language and colour style."
       },
       pt: {
         title: "Início",
@@ -74,8 +74,7 @@
         login: "Entrar",
         eyebrow: "INÍCIO",
         heading: "Boas-vindas",
-        description:
-          "Boas-vindas ao seu site. Use os seletores acima para escolher o idioma e o estilo de cores."
+        description: "Boas-vindas ao seu site. Use os seletores acima para escolher o idioma e o estilo de cores."
       },
       es: {
         title: "Inicio",
@@ -84,20 +83,19 @@
         login: "Iniciar sesión",
         eyebrow: "INICIO",
         heading: "Bienvenido",
-        description:
-          "Te damos la bienvenida a tu sitio web. Usa los selectores de arriba para elegir el idioma y el estilo de color."
+        description: "Te damos la bienvenida a tu sitio web. Usa los selectores de arriba para elegir el idioma y el estilo de color."
       }
     };
 
     const languageSelect = document.getElementById("language");
     const themeSelect = document.getElementById("theme");
 
-    function setLanguage(language) {
-      const selectedLanguage = translations[language] ? language : "en";
-      const text = translations[selectedLanguage];
+    function setLanguage(value) {
+      const language = translations[value] ? value : "en";
+      const text = translations[language];
 
-      languageSelect.value = selectedLanguage;
-      document.documentElement.lang = selectedLanguage;
+      languageSelect.value = language;
+      document.documentElement.lang = language;
       document.title = text.title;
       document.getElementById("languageLabel").textContent = text.language;
       document.getElementById("themeLabel").textContent = text.theme;
@@ -106,27 +104,20 @@
       document.getElementById("heading").textContent = text.heading;
       document.getElementById("description").textContent = text.description;
 
-      localStorage.setItem("siteLanguage", selectedLanguage);
+      localStorage.setItem("siteLanguage", language);
     }
 
-    function setTheme(theme) {
-      const validTheme = [...themeSelect.options].some(
-        option => option.value === theme
-      );
-      const selectedTheme = validTheme ? theme : "ocean";
+    function setTheme(value) {
+      const isValid = [...themeSelect.options].some(option => option.value === value);
+      const theme = isValid ? value : "ocean";
 
-      themeSelect.value = selectedTheme;
-      document.documentElement.dataset.theme = selectedTheme;
-      localStorage.setItem("siteTheme", selectedTheme);
+      themeSelect.value = theme;
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem("siteTheme", theme);
     }
 
-    languageSelect.addEventListener("change", () => {
-      setLanguage(languageSelect.value);
-    });
-
-    themeSelect.addEventListener("change", () => {
-      setTheme(themeSelect.value);
-    });
+    languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
+    themeSelect.addEventListener("change", () => setTheme(themeSelect.value));
 
     setLanguage(localStorage.getItem("siteLanguage") || "en");
     setTheme(localStorage.getItem("siteTheme") || "ocean");

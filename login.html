@@ -42,47 +42,28 @@
     </div>
   </header>
 
-  <main class="main-content">
-    <section class="welcome-card">
+  <main class="page">
+    <section class="card">
       <h1 id="title">Sign in</h1>
-      <p class="muted" id="description">
-        Enter your email and password to sign in.
-      </p>
+      <p class="muted" id="description">Enter your email and password to sign in.</p>
 
       <form id="authForm" class="auth-form">
         <div class="field">
           <label for="email" id="emailLabel">Email address</label>
-          <input
-            id="email"
-            type="email"
-            autocomplete="email"
-            required
-          >
+          <input id="email" type="email" autocomplete="email" required>
         </div>
 
         <div class="field">
           <label for="password" id="passwordLabel">Password</label>
-          <input
-            id="password"
-            type="password"
-            autocomplete="current-password"
-            minlength="6"
-            required
-          >
+          <input id="password" type="password" autocomplete="current-password" minlength="6" required>
         </div>
 
-        <button class="button" type="submit" id="submitButton">
-          Sign in
-        </button>
+        <button class="button" type="submit" id="submitButton">Sign in</button>
       </form>
 
       <div class="auth-actions">
-        <button class="button secondary" type="button" id="modeButton">
-          Create account
-        </button>
-        <button class="button secondary" type="button" id="resetButton">
-          Forgot password?
-        </button>
+        <button class="button secondary" type="button" id="modeButton">Create account</button>
+        <button class="button secondary" type="button" id="resetButton">Forgot password?</button>
       </div>
 
       <p id="message" role="status" aria-live="polite"></p>
@@ -95,11 +76,7 @@
   <script>
     const SUPABASE_URL = "https://ybdvrgfrhfrznmeafqdz.supabase.co";
     const SUPABASE_KEY = "sb_publishable_n2Rbhasdsel-p60r3M1zEQ_igkqAlbb";
-
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const translations = {
       en: {
@@ -185,18 +162,11 @@
 
     function updateModeText() {
       const text = translations[language];
-
-      document.getElementById("title").textContent =
-        isSignUp ? text.titleUp : text.titleIn;
-      document.getElementById("description").textContent =
-        isSignUp ? text.descriptionUp : text.descriptionIn;
-      submitButton.textContent =
-        isSignUp ? text.submitUp : text.submitIn;
-      modeButton.textContent =
-        isSignUp ? text.modeUp : text.modeIn;
-
-      passwordInput.autocomplete =
-        isSignUp ? "new-password" : "current-password";
+      document.getElementById("title").textContent = isSignUp ? text.titleUp : text.titleIn;
+      document.getElementById("description").textContent = isSignUp ? text.descriptionUp : text.descriptionIn;
+      submitButton.textContent = isSignUp ? text.submitUp : text.submitIn;
+      modeButton.textContent = isSignUp ? text.modeUp : text.modeIn;
+      passwordInput.autocomplete = isSignUp ? "new-password" : "current-password";
     }
 
     function setLanguage(value) {
@@ -206,7 +176,6 @@
       languageSelect.value = language;
       document.documentElement.lang = language;
       document.title = isSignUp ? text.titleUp : text.titleIn;
-
       document.getElementById("languageLabel").textContent = text.language;
       document.getElementById("themeLabel").textContent = text.theme;
       document.getElementById("emailLabel").textContent = text.email;
@@ -219,23 +188,16 @@
     }
 
     function setTheme(value) {
-      const validTheme = [...themeSelect.options].some(
-        option => option.value === value
-      );
-      const theme = validTheme ? value : "ocean";
+      const isValid = [...themeSelect.options].some(option => option.value === value);
+      const theme = isValid ? value : "ocean";
 
       themeSelect.value = theme;
       document.documentElement.dataset.theme = theme;
       localStorage.setItem("siteTheme", theme);
     }
 
-    languageSelect.addEventListener("change", () => {
-      setLanguage(languageSelect.value);
-    });
-
-    themeSelect.addEventListener("change", () => {
-      setTheme(themeSelect.value);
-    });
+    languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
+    themeSelect.addEventListener("change", () => setTheme(themeSelect.value));
 
     modeButton.addEventListener("click", () => {
       isSignUp = !isSignUp;
@@ -264,17 +226,11 @@
             email,
             password,
             options: {
-              emailRedirectTo: new URL(
-                "welcome.html",
-                window.location.href
-              ).toString()
+              emailRedirectTo: new URL("welcome.html", window.location.href).toString()
             }
           });
         } else {
-          result = await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-          });
+          result = await supabaseClient.auth.signInWithPassword({ email, password });
         }
 
         if (result.error) {
@@ -285,7 +241,6 @@
 
         if (isSignUp) {
           message.textContent = text.created;
-
           if (result.data.session) {
             window.location.href = "./welcome.html";
           }
@@ -318,13 +273,9 @@
       message.textContent = "";
 
       try {
-        const { error } =
-          await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: new URL(
-              "welcome.html",
-              window.location.href
-            ).toString()
-          });
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+          redirectTo: new URL("welcome.html", window.location.href).toString()
+        });
 
         if (error) {
           console.error("Password reset error:", error);

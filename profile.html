@@ -1,20 +1,21 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="ocean">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My profile</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="./styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body data-theme="ocean">
+<body>
   <header class="site-header">
-    <a class="brand" href="index.html">
+    <a class="brand" href="./index.html" aria-label="Home">
       <span class="logo-placeholder" aria-hidden="true">LOGO</span>
-      <span>My Website</span>
+      <span class="brand-name">My Website</span>
     </a>
+
     <div class="preferences">
-      <label>
+      <label for="language">
         <span id="languageLabel">Language</span>
         <select id="language">
           <option value="en">English</option>
@@ -22,19 +23,20 @@
           <option value="es">Español</option>
         </select>
       </label>
-      <label>
+
+      <label for="theme">
         <span id="themeLabel">Style</span>
         <select id="theme">
           <option value="ocean">Ocean</option>
           <option value="forest">Forest</option>
           <option value="sunset">Sunset</option>
           <option value="lavender">Lavender</option>
+          <option value="earth">Earth</option>
           <option value="berry">Berry</option>
-          <option value="sand">Sand</option>
-          <option value="slate">Slate</option>
+          <option value="sky">Sky</option>
+          <option value="sage">Sage</option>
           <option value="coral">Coral</option>
-          <option value="mint">Mint</option>
-          <option value="midnight">Midnight</option>
+          <option value="monochrome">Monochrome</option>
         </select>
       </label>
     </div>
@@ -43,7 +45,7 @@
   <main class="page">
     <section class="card">
       <h1 id="title">My profile</h1>
-      <p id="message" role="status" aria-live="polite">Loading profile…</p>
+      <p class="muted" id="message" role="status" aria-live="polite">Loading profile…</p>
 
       <form id="profileForm" class="hidden">
         <div class="field">
@@ -57,7 +59,9 @@
         <button type="submit" id="saveButton">Save profile</button>
       </form>
 
-      <p class="footer-note"><a id="homeLink" href="index.html">Return to home</a></p>
+      <p class="footer-note">
+        <a id="homeLink" href="./index.html">Return to home</a>
+      </p>
     </section>
   </main>
 
@@ -103,10 +107,11 @@
 
     function setLanguage(value) {
       language = translations[value] ? value : "en";
+      const t = translations[language];
+
       localStorage.setItem("siteLanguage", language);
       languageSelect.value = language;
       document.documentElement.lang = language;
-      const t = translations[language];
       document.getElementById("languageLabel").textContent = t.language;
       document.getElementById("themeLabel").textContent = t.theme;
       document.getElementById("title").textContent = t.title;
@@ -116,12 +121,13 @@
       saveButton.textContent = t.save;
     }
 
-    function setTheme(theme) {
-      const allowed = [...themeSelect.options].map(option => option.value);
-      const selected = allowed.includes(theme) ? theme : "ocean";
-      document.body.dataset.theme = selected;
-      themeSelect.value = selected;
-      localStorage.setItem("siteTheme", selected);
+    function setTheme(value) {
+      const isValid = [...themeSelect.options].some(option => option.value === value);
+      const theme = isValid ? value : "ocean";
+
+      themeSelect.value = theme;
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem("siteTheme", theme);
     }
 
     languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
@@ -129,6 +135,7 @@
 
     async function loadProfile() {
       const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+
       if (sessionError || !sessionData.session) {
         message.textContent = translations[language].signedOut;
         return;
@@ -178,6 +185,7 @@
         message.textContent = t.saveError;
         return;
       }
+
       message.textContent = t.saved;
     });
 
