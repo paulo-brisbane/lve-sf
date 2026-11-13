@@ -1,47 +1,55 @@
 <!doctype html>
-<html lang="en" data-theme="ocean">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Home</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
-<body>
+<body data-theme="ocean">
   <header class="site-header">
     <a class="brand" href="./" aria-label="Home">
       <span class="logo-placeholder" aria-hidden="true">LOGO</span>
       <span class="brand-name">Your Website</span>
     </a>
 
-    <div class="header-controls">
-      <label class="sr-only" for="language">Language</label>
-      <select id="language" aria-label="Language">
-        <option value="en">English</option>
-        <option value="pt">Português</option>
-        <option value="es">Español</option>
-      </select>
+    <div class="header-actions">
+      <div class="preferences">
+        <label>
+          <span id="languageLabel">Language</span>
+          <select id="language" aria-label="Language">
+            <option value="en">English</option>
+            <option value="pt">Português</option>
+            <option value="es">Español</option>
+          </select>
+        </label>
 
-      <label class="sr-only" for="theme">Colour style</label>
-      <select id="theme" aria-label="Colour style">
-        <option value="ocean">Ocean</option>
-        <option value="forest">Forest</option>
-        <option value="sunset">Sunset</option>
-        <option value="lavender">Lavender</option>
-        <option value="earth">Earth</option>
-        <option value="berry">Berry</option>
-        <option value="sky">Sky</option>
-        <option value="sage">Sage</option>
-        <option value="coral">Coral</option>
-        <option value="monochrome">Monochrome</option>
-      </select>
+        <label>
+          <span id="themeLabel">Colour style</span>
+          <select id="theme" aria-label="Colour style">
+            <option value="ocean">Ocean</option>
+            <option value="forest">Forest</option>
+            <option value="sunset">Sunset</option>
+            <option value="lavender">Lavender</option>
+            <option value="berry">Berry</option>
+            <option value="sand">Sand</option>
+            <option value="slate">Slate</option>
+            <option value="coral">Coral</option>
+            <option value="mint">Mint</option>
+            <option value="midnight">Midnight</option>
+          </select>
+        </label>
+      </div>
+
+      <a class="button" id="loginLink" href="./login.html">Login</a>
     </div>
   </header>
 
-  <main class="main-content">
-    <section class="welcome-card">
+  <main class="page">
+    <section class="card">
       <p class="eyebrow" id="eyebrow">HOME</p>
       <h1 id="heading">Welcome</h1>
-      <p id="description">
+      <p class="muted" id="description">
         Welcome to your website. Use the selectors above to choose your language
         and colour style.
       </p>
@@ -52,6 +60,9 @@
     const translations = {
       en: {
         title: "Home",
+        language: "Language",
+        theme: "Colour style",
+        login: "Login",
         eyebrow: "HOME",
         heading: "Welcome",
         description:
@@ -59,6 +70,9 @@
       },
       pt: {
         title: "Início",
+        language: "Idioma",
+        theme: "Estilo de cores",
+        login: "Entrar",
         eyebrow: "INÍCIO",
         heading: "Boas-vindas",
         description:
@@ -66,10 +80,13 @@
       },
       es: {
         title: "Inicio",
+        language: "Idioma",
+        theme: "Estilo de color",
+        login: "Iniciar sesión",
         eyebrow: "INICIO",
         heading: "Bienvenido",
         description:
-          "Te damos la bienvenida a tu sitio web. Usa los selectores de arriba para elegir el idioma y el estilo de colores."
+          "Te damos la bienvenida a tu sitio web. Usa los selectores de arriba para elegir el idioma y el estilo de color."
       }
     };
 
@@ -77,32 +94,32 @@
     const themeSelect = document.getElementById("theme");
 
     function setLanguage(language) {
-      const text = translations[language] || translations.en;
+      const selectedLanguage = translations[language] ? language : "en";
+      const text = translations[selectedLanguage];
 
-      document.documentElement.lang = language;
+      languageSelect.value = selectedLanguage;
+      document.documentElement.lang = selectedLanguage;
       document.title = text.title;
+      document.getElementById("languageLabel").textContent = text.language;
+      document.getElementById("themeLabel").textContent = text.theme;
+      document.getElementById("loginLink").textContent = text.login;
       document.getElementById("eyebrow").textContent = text.eyebrow;
       document.getElementById("heading").textContent = text.heading;
       document.getElementById("description").textContent = text.description;
 
-      localStorage.setItem("siteLanguage", language);
+      localStorage.setItem("siteLanguage", selectedLanguage);
     }
 
     function setTheme(theme) {
-      document.documentElement.dataset.theme = theme;
-      localStorage.setItem("siteTheme", theme);
+      const validTheme = [...themeSelect.options].some(
+        option => option.value === theme
+      );
+      const selectedTheme = validTheme ? theme : "ocean";
+
+      themeSelect.value = selectedTheme;
+      document.body.dataset.theme = selectedTheme;
+      localStorage.setItem("siteTheme", selectedTheme);
     }
-
-    const savedLanguage = localStorage.getItem("siteLanguage") || "en";
-    const savedTheme = localStorage.getItem("siteTheme") || "ocean";
-
-    languageSelect.value = translations[savedLanguage] ? savedLanguage : "en";
-    themeSelect.value = themeSelect.querySelector(
-      `option[value="${CSS.escape(savedTheme)}"]`
-    ) ? savedTheme : "ocean";
-
-    setLanguage(languageSelect.value);
-    setTheme(themeSelect.value);
 
     languageSelect.addEventListener("change", () => {
       setLanguage(languageSelect.value);
@@ -111,6 +128,9 @@
     themeSelect.addEventListener("change", () => {
       setTheme(themeSelect.value);
     });
+
+    setLanguage(localStorage.getItem("siteLanguage") || "en");
+    setTheme(localStorage.getItem("siteTheme") || "ocean");
   </script>
 </body>
 </html>
