@@ -1,20 +1,21 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="ocean">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sign in</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="./styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body data-theme="ocean">
+<body>
   <header class="site-header">
-    <a class="brand" href="index.html">
+    <a class="brand" href="./index.html" aria-label="Home">
       <span class="logo-placeholder" aria-hidden="true">LOGO</span>
-      <span>My Website</span>
+      <span class="brand-name">My Website</span>
     </a>
-    <div class="preferences">
-      <label>
+
+    <div class="header-controls">
+      <label for="language">
         <span id="languageLabel">Language</span>
         <select id="language">
           <option value="en">English</option>
@@ -22,99 +23,149 @@
           <option value="es">Español</option>
         </select>
       </label>
-      <label>
-        <span id="themeLabel">Style</span>
+
+      <label for="theme">
+        <span id="themeLabel">Colour style</span>
         <select id="theme">
           <option value="ocean">Ocean</option>
           <option value="forest">Forest</option>
           <option value="sunset">Sunset</option>
           <option value="lavender">Lavender</option>
+          <option value="earth">Earth</option>
           <option value="berry">Berry</option>
-          <option value="sand">Sand</option>
-          <option value="slate">Slate</option>
+          <option value="sky">Sky</option>
+          <option value="sage">Sage</option>
           <option value="coral">Coral</option>
-          <option value="mint">Mint</option>
-          <option value="midnight">Midnight</option>
+          <option value="monochrome">Monochrome</option>
         </select>
       </label>
     </div>
   </header>
 
-  <main class="page">
-    <section class="card">
+  <main class="main-content">
+    <section class="welcome-card">
       <h1 id="title">Sign in</h1>
-      <p class="muted" id="description"></p>
+      <p class="muted" id="description">
+        Enter your email and password to sign in.
+      </p>
 
-      <form id="authForm">
+      <form id="authForm" class="auth-form">
         <div class="field">
           <label for="email" id="emailLabel">Email address</label>
-          <input id="email" type="email" autocomplete="email" required>
+          <input
+            id="email"
+            type="email"
+            autocomplete="email"
+            required
+          >
         </div>
 
         <div class="field">
           <label for="password" id="passwordLabel">Password</label>
-          <input id="password" type="password" autocomplete="current-password" minlength="6" required>
+          <input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            minlength="6"
+            required
+          >
         </div>
 
-        <button type="submit" id="submitButton">Sign in</button>
+        <button class="button" type="submit" id="submitButton">
+          Sign in
+        </button>
       </form>
 
-      <div class="button-row" style="margin-top: 12px;">
-        <button class="secondary" type="button" id="modeButton">Create account</button>
-        <button class="secondary" type="button" id="resetButton">Forgot password?</button>
+      <div class="auth-actions">
+        <button class="button secondary" type="button" id="modeButton">
+          Create account
+        </button>
+        <button class="button secondary" type="button" id="resetButton">
+          Forgot password?
+        </button>
       </div>
 
       <p id="message" role="status" aria-live="polite"></p>
-      <p class="footer-note"><a id="homeLink" href="index.html">Return to home</a></p>
+      <p class="auth-footer">
+        <a id="homeLink" href="./index.html">Return to home</a>
+      </p>
     </section>
   </main>
 
   <script>
     const SUPABASE_URL = "https://ybdvrgfrhfrznmeafqdz.supabase.co";
     const SUPABASE_KEY = "sb_publishable_n2Rbhasdsel-p60r3M1zEQ_igkqAlbb";
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
     const translations = {
       en: {
-        language: "Language", theme: "Style", titleIn: "Sign in", titleUp: "Create account",
+        titleIn: "Sign in",
+        titleUp: "Create account",
         descriptionIn: "Enter your email and password to sign in.",
         descriptionUp: "Create an account with your email address and a password.",
-        email: "Email address", password: "Password", submitIn: "Sign in",
-        submitUp: "Create account", modeIn: "Create account", modeUp: "I already have an account",
-        reset: "Forgot password?", sending: "Please wait…",
+        language: "Language",
+        theme: "Colour style",
+        email: "Email address",
+        password: "Password",
+        submitIn: "Sign in",
+        submitUp: "Create account",
+        modeIn: "Create account",
+        modeUp: "I already have an account",
+        reset: "Forgot password?",
+        sending: "Please wait…",
         signedIn: "Signed in. Opening your account…",
-        created: "Account created. If email confirmation is enabled, check your inbox to confirm your address.",
+        created: "Account created. Check your email if confirmation is required.",
         resetSent: "If an account exists for that address, a password reset email has been sent.",
         resetNeedEmail: "Enter your email address first, then choose “Forgot password?”.",
         error: "Authentication failed. Check your details and try again.",
         home: "Return to home"
       },
       pt: {
-        language: "Idioma", theme: "Estilo", titleIn: "Entrar", titleUp: "Criar conta",
+        titleIn: "Entrar",
+        titleUp: "Criar conta",
         descriptionIn: "Digite seu e-mail e sua senha para entrar.",
         descriptionUp: "Crie uma conta com seu endereço de e-mail e uma senha.",
-        email: "Endereço de e-mail", password: "Senha", submitIn: "Entrar",
-        submitUp: "Criar conta", modeIn: "Criar conta", modeUp: "Já tenho uma conta",
-        reset: "Esqueceu a senha?", sending: "Aguarde…",
+        language: "Idioma",
+        theme: "Estilo de cores",
+        email: "Endereço de e-mail",
+        password: "Senha",
+        submitIn: "Entrar",
+        submitUp: "Criar conta",
+        modeIn: "Criar conta",
+        modeUp: "Já tenho uma conta",
+        reset: "Esqueceu a senha?",
+        sending: "Aguarde…",
         signedIn: "Acesso realizado. Abrindo sua conta…",
-        created: "Conta criada. Se a confirmação de e-mail estiver ativada, confira sua caixa de entrada.",
+        created: "Conta criada. Confira seu e-mail caso seja necessária uma confirmação.",
         resetSent: "Se houver uma conta para esse endereço, um e-mail de redefinição foi enviado.",
         resetNeedEmail: "Digite seu e-mail e selecione “Esqueceu a senha?”.",
         error: "Não foi possível autenticar. Confira os dados e tente novamente.",
         home: "Voltar ao início"
       },
       es: {
-        language: "Idioma", theme: "Estilo", titleIn: "Iniciar sesión", titleUp: "Crear cuenta",
+        titleIn: "Iniciar sesión",
+        titleUp: "Crear cuenta",
         descriptionIn: "Introduce tu correo y contraseña para iniciar sesión.",
         descriptionUp: "Crea una cuenta con tu correo electrónico y una contraseña.",
-        email: "Correo electrónico", password: "Contraseña", submitIn: "Iniciar sesión",
-        submitUp: "Crear cuenta", modeIn: "Crear cuenta", modeUp: "Ya tengo una cuenta",
-        reset: "¿Olvidaste tu contraseña?", sending: "Espera…",
+        language: "Idioma",
+        theme: "Estilo de color",
+        email: "Correo electrónico",
+        password: "Contraseña",
+        submitIn: "Iniciar sesión",
+        submitUp: "Crear cuenta",
+        modeIn: "Crear cuenta",
+        modeUp: "Ya tengo una cuenta",
+        reset: "¿Olvidaste tu contraseña?",
+        sending: "Espera…",
         signedIn: "Sesión iniciada. Abriendo tu cuenta…",
-        created: "Cuenta creada. Si la confirmación por correo está activada, revisa tu bandeja de entrada.",
+        created: "Cuenta creada. Revisa tu correo si se requiere confirmación.",
         resetSent: "Si existe una cuenta con esa dirección, se ha enviado un correo para restablecer la contraseña.",
         resetNeedEmail: "Introduce tu correo y selecciona “¿Olvidaste tu contraseña?”.",
-        error: "No se pudo iniciar sesión. Comprueba tus datos e inténtalo de nuevo.",
+        error: "No se pudo autenticar. Comprueba tus datos e inténtalo de nuevo.",
         home: "Volver al inicio"
       }
     };
@@ -132,41 +183,59 @@
     let language = localStorage.getItem("siteLanguage") || "en";
     let isSignUp = false;
 
+    function updateModeText() {
+      const text = translations[language];
+
+      document.getElementById("title").textContent =
+        isSignUp ? text.titleUp : text.titleIn;
+      document.getElementById("description").textContent =
+        isSignUp ? text.descriptionUp : text.descriptionIn;
+      submitButton.textContent =
+        isSignUp ? text.submitUp : text.submitIn;
+      modeButton.textContent =
+        isSignUp ? text.modeUp : text.modeIn;
+
+      passwordInput.autocomplete =
+        isSignUp ? "new-password" : "current-password";
+    }
+
     function setLanguage(value) {
       language = translations[value] ? value : "en";
-      localStorage.setItem("siteLanguage", language);
+      const text = translations[language];
+
       languageSelect.value = language;
       document.documentElement.lang = language;
-      const t = translations[language];
+      document.title = isSignUp ? text.titleUp : text.titleIn;
 
-      document.getElementById("languageLabel").textContent = t.language;
-      document.getElementById("themeLabel").textContent = t.theme;
-      document.getElementById("emailLabel").textContent = t.email;
-      document.getElementById("passwordLabel").textContent = t.password;
-      document.getElementById("resetButton").textContent = t.reset;
-      document.getElementById("homeLink").textContent = t.home;
+      document.getElementById("languageLabel").textContent = text.language;
+      document.getElementById("themeLabel").textContent = text.theme;
+      document.getElementById("emailLabel").textContent = text.email;
+      document.getElementById("passwordLabel").textContent = text.password;
+      document.getElementById("homeLink").textContent = text.home;
+      resetButton.textContent = text.reset;
+
+      localStorage.setItem("siteLanguage", language);
       updateModeText();
     }
 
-    function updateModeText() {
-      const t = translations[language];
-      document.getElementById("title").textContent = isSignUp ? t.titleUp : t.titleIn;
-      document.getElementById("description").textContent = isSignUp ? t.descriptionUp : t.descriptionIn;
-      submitButton.textContent = isSignUp ? t.submitUp : t.submitIn;
-      modeButton.textContent = isSignUp ? t.modeUp : t.modeIn;
-      passwordInput.autocomplete = isSignUp ? "new-password" : "current-password";
+    function setTheme(value) {
+      const validTheme = [...themeSelect.options].some(
+        option => option.value === value
+      );
+      const theme = validTheme ? value : "ocean";
+
+      themeSelect.value = theme;
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem("siteTheme", theme);
     }
 
-    function setTheme(theme) {
-      const allowed = [...themeSelect.options].map(option => option.value);
-      const selected = allowed.includes(theme) ? theme : "ocean";
-      document.body.dataset.theme = selected;
-      themeSelect.value = selected;
-      localStorage.setItem("siteTheme", selected);
-    }
+    languageSelect.addEventListener("change", () => {
+      setLanguage(languageSelect.value);
+    });
 
-    languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
-    themeSelect.addEventListener("change", () => setTheme(themeSelect.value));
+    themeSelect.addEventListener("change", () => {
+      setTheme(themeSelect.value);
+    });
 
     modeButton.addEventListener("click", () => {
       isSignUp = !isSignUp;
@@ -176,68 +245,98 @@
 
     form.addEventListener("submit", async event => {
       event.preventDefault();
-      const t = translations[language];
-      message.textContent = "";
-      submitButton.disabled = true;
-      submitButton.textContent = t.sending;
 
+      const text = translations[language];
       const email = emailInput.value.trim();
       const password = passwordInput.value;
 
-      let result;
-      if (isSignUp) {
-        result = await supabaseClient.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: new URL("welcome.html", window.location.href).toString()
-          }
-        });
-      } else {
-        result = await supabaseClient.auth.signInWithPassword({ email, password });
-      }
+      message.textContent = "";
+      submitButton.disabled = true;
+      modeButton.disabled = true;
+      resetButton.disabled = true;
+      submitButton.textContent = text.sending;
 
-      submitButton.disabled = false;
-      updateModeText();
+      try {
+        let result;
 
-      if (result.error) {
-        console.error("Supabase auth error:", result.error);
-        message.textContent = t.error;
-        return;
-      }
-
-      if (isSignUp) {
-        message.textContent = t.created;
-        if (result.data.session) {
-          window.location.href = "welcome.html";
+        if (isSignUp) {
+          result = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: new URL(
+                "welcome.html",
+                window.location.href
+              ).toString()
+            }
+          });
+        } else {
+          result = await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+          });
         }
-      } else {
-        message.textContent = t.signedIn;
-        window.location.href = "welcome.html";
+
+        if (result.error) {
+          console.error("Supabase authentication error:", result.error);
+          message.textContent = text.error;
+          return;
+        }
+
+        if (isSignUp) {
+          message.textContent = text.created;
+
+          if (result.data.session) {
+            window.location.href = "./welcome.html";
+          }
+        } else {
+          message.textContent = text.signedIn;
+          window.location.href = "./welcome.html";
+        }
+      } catch (error) {
+        console.error("Authentication request failed:", error);
+        message.textContent = text.error;
+      } finally {
+        submitButton.disabled = false;
+        modeButton.disabled = false;
+        resetButton.disabled = false;
+        updateModeText();
       }
     });
 
     resetButton.addEventListener("click", async () => {
-      const t = translations[language];
+      const text = translations[language];
       const email = emailInput.value.trim();
 
       if (!email) {
-        message.textContent = t.resetNeedEmail;
+        message.textContent = text.resetNeedEmail;
         emailInput.focus();
         return;
       }
 
       resetButton.disabled = true;
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: new URL("welcome.html", window.location.href).toString()
-      });
-      resetButton.disabled = false;
+      message.textContent = "";
 
-      if (error) {
-        console.error("Password reset error:", error);
-        message.textContent = t.error;
-      } else {
-        message.textContent = t.resetSent;
+      try {
+        const { error } =
+          await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: new URL(
+              "welcome.html",
+              window.location.href
+            ).toString()
+          });
+
+        if (error) {
+          console.error("Password reset error:", error);
+          message.textContent = text.error;
+        } else {
+          message.textContent = text.resetSent;
+        }
+      } catch (error) {
+        console.error("Password reset request failed:", error);
+        message.textContent = text.error;
+      } finally {
+        resetButton.disabled = false;
       }
     });
 
