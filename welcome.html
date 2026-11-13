@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Welcome</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 600px;
+      margin: 4rem auto;
+      padding: 0 1rem;
+    }
+
+    button {
+      padding: 0.75rem 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome!</h1>
+  <p>You are signed in.</p>
+  <button id="signout-button">Sign out</button>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+    const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      window.location.replace("index.html");
+    }
+
+    document.querySelector("#signout-button").addEventListener("click", async () => {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      window.location.replace("index.html");
+    });
+  </script>
+</body>
+</html>
