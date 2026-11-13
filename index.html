@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 420px;
+      margin: 4rem auto;
+      padding: 0 1rem;
+    }
+
+    label, input, button {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    input, button {
+      margin: 0.5rem 0 1rem;
+      padding: 0.75rem;
+    }
+
+    #message {
+      min-height: 1.5em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sign in</h1>
+
+  <form id="auth-form">
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="email" required>
+
+    <label for="password">Password</label>
+    <input
+      id="password"
+      type="password"
+      autocomplete="current-password"
+      minlength="6"
+      required
+    >
+
+    <button type="submit">Sign in</button>
+    <button type="button" id="signup-button">Create account</button>
+  </form>
+
+  <p id="message" role="status"></p>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+    const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const form = document.querySelector("#auth-form");
+    const message = document.querySelector("#message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      message.textContent = "Signing in…";
+
+      const email = document.querySelector("#email").value;
+      const password = document.querySelector("#password").value;
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        message.textContent = error.message;
+        return;
+      }
+
+      window.location.href = "welcome.html";
+    });
+
+    document.querySelector("#signup-button").addEventListener("click", async () => {
+      message.textContent = "Creating account…";
+
+      const email = document.querySelector("#email").value;
+      const password = document.querySelector("#password").value;
+
+      if (!email || !password) {
+        message.textContent = "Enter an email and password first.";
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: window.location.href
+        }
+      });
+
+      if (error) {
+        message.textContent = error.message;
+        return;
+      }
+
+      if (data.session) {
+        window.location.href = "welcome.html";
+      } else {
+        message.textContent =
+          "Account created. Check your email to confirm it, then sign in.";
+      }
+    });
+  </script>
+</body>
+</html>
