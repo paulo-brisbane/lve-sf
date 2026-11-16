@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 flex items-center justify-center p-4 text-slate-800">
+
+  <main class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6">
+
+    <!-- Sign-in form -->
+    <section id="signin-view" class="space-y-6">
+      <div>
+        <a href="index.html" class="text-sm text-indigo-600 hover:underline">&larr; Back</a>
+        <h1 class="mt-2 text-2xl font-bold">Sign in</h1>
+        <p class="text-slate-500">Enter your client reference in the format ABCD-1234.</p>
+      </div>
+
+      <form id="signin-form" class="space-y-4" novalidate>
+        <div>
+          <label for="signin-ref" class="block text-sm font-medium mb-1">Client reference</label>
+          <input id="signin-ref" name="clientRef" type="text" maxlength="9" placeholder="ABCD-1234" autocomplete="off"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 font-mono uppercase tracking-widest focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+        </div>
+        <p id="signin-error" class="hidden text-sm text-red-600"></p>
+        <button type="submit" id="signin-submit"
+          class="w-full rounded-lg bg-indigo-600 py-3 font-semibold text-white hover:bg-indigo-700 disabled:opacity-50">
+          Sign in
+        </button>
+      </form>
+    </section>
+
+    <!-- Welcome -->
+    <section id="welcome-view" class="hidden space-y-6 text-center">
+      <h1 class="text-2xl font-bold">Hello, <span id="welcome-nickname"></span></h1>
+      <p class="text-slate-500">You are signed in as <span id="welcome-ref" class="font-mono font-semibold"></span>.</p>
+      <a href="index.html"
+        class="block w-full rounded-lg border border-slate-300 py-3 font-semibold text-slate-700 hover:bg-slate-50">
+        Sign out
+      </a>
+    </section>
+
+  </main>
+
+  <script>
+    const API_BASE = "/api/clients";
+    const CLIENT_REF_PATTERN = /^[A-Z]{4}-\d{4}$/;
+
+    function showError(message) {
+      const el = document.getElementById("signin-error");
+      el.textContent = message;
+      el.classList.remove("hidden");
+    }
+
+    function clearError() {
+      const el = document.getElementById("signin-error");
+      el.textContent = "";
+      el.classList.add("hidden");
+    }
+
+    const form = document.getElementById("signin-form");
+    const submitBtn = document.getElementById("signin-submit");
+    const input = document.getElementById("signin-ref");
+
+    input.addEventListener("input", () => {
+      input.value = input.value.toUpperCase();
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearError();
+
+      const clientRef = input.value.trim();
+      if (!CLIENT_REF_PATTERN.test(clientRef)) {
+        showError("Enter your client reference in the format ABCD-1234.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      try {
+        const response = await fetch(API_BASE + "/sign-in", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ clientRef })
+        });
+
+        if (response.ok) {
+        	window.location.href = "client-portal.html";
+        } else if (response.status === 401) {
+          showError("Client reference not found. Check it and try again.");
+        } else {
+          showError("Could not sign in. Try again.");
+        }
+      } catch {
+        showError("Connection error. Check your network and try again.");
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

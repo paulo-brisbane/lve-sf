@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100 flex items-center justify-center p-4 text-slate-800">
+
+  <main class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6">
+    <div>
+      <a href="index.html" class="text-sm text-indigo-600 hover:underline">&larr; Back</a>
+      <h1 class="mt-2 text-2xl font-bold">Create account</h1>
+      <p class="text-slate-500">Choose a nickname (2 to 30 characters). You will receive a client reference.</p>
+    </div>
+
+    <form id="create-form" class="space-y-4" novalidate>
+      <div>
+        <label for="create-nickname" class="block text-sm font-medium mb-1">Nickname</label>
+        <input id="create-nickname" name="nickname" type="text" minlength="2" maxlength="30" required
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+      </div>
+      <p id="create-error" class="hidden text-sm text-red-600"></p>
+      <button type="submit" id="create-submit"
+        class="w-full rounded-lg bg-indigo-600 py-3 font-semibold text-white hover:bg-indigo-700 disabled:opacity-50">
+        Create account
+      </button>
+    </form>
+
+    <div id="create-success" class="hidden space-y-4 rounded-lg border border-emerald-300 bg-emerald-50 p-4">
+      <p class="font-semibold text-emerald-800">Account created.</p>
+      <p class="text-sm text-slate-700">Your client reference is:</p>
+      <p id="new-client-ref" class="text-center font-mono text-2xl font-bold tracking-widest"></p>
+      <p class="text-sm text-slate-700">Save this number. You will need it to sign in.</p>
+      <a href="sign-in.html"
+        class="block w-full rounded-lg bg-indigo-600 py-3 text-center font-semibold text-white hover:bg-indigo-700">
+        Go to sign in
+      </a>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = "/api/clients";
+
+    function showError(message) {
+      const el = document.getElementById("create-error");
+      el.textContent = message;
+      el.classList.remove("hidden");
+    }
+
+    function clearError() {
+      const el = document.getElementById("create-error");
+      el.textContent = "";
+      el.classList.add("hidden");
+    }
+
+    const form = document.getElementById("create-form");
+    const submitBtn = document.getElementById("create-submit");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearError();
+
+      const nickname = document.getElementById("create-nickname").value.trim();
+      if (nickname.length < 2 || nickname.length > 30) {
+        showError("Nickname must have between 2 and 30 characters.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      try {
+        const response = await fetch(API_BASE, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nickname })
+        });
+
+        if (response.status === 201) {
+          const client = await response.json();
+          document.getElementById("new-client-ref").textContent = client.clientRef;
+          document.getElementById("create-success").classList.remove("hidden");
+          form.classList.add("hidden");
+        } else {
+          let message = "Could not create the account. Try again.";
+          try {
+            const body = await response.json();
+            if (body.error) message = body.error;
+          } catch {}
+          showError(message);
+        }
+      } catch {
+        showError("Connection error. Check your network and try again.");
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
