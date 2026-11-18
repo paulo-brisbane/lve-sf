@@ -6,9 +6,9 @@
   <title>Client Portal</title>
   <link rel="stylesheet" href="/assets/css/base.css">
 </head>
-<body class="invisible min-h-screen bg-slate-100 text-slate-800">
+<body class="invisible min-h-screen text-slate-800">
 
-  <header class="bg-white shadow-sm">
+  <header class="site-header shadow-sm">
     <div class="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
       <div id="site-logo" class="flex items-baseline gap-1 font-bold tracking-tight"></div>
       <div class="relative">
@@ -18,7 +18,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4z" />
           </svg>
         </button>
-        <div id="user-menu" class="hidden absolute right-0 z-10 mt-2 w-44 rounded-xl bg-white py-2 shadow-lg ring-1 ring-slate-200">
+        <div id="user-menu" class="hidden absolute right-0 z-10 mt-2 w-44 rounded-xl bg-[var(--card-bg)] py-2 shadow-lg ring-1 ring-slate-200">
           <a href="/assets/html/settings.html" data-i18n="portal_menu_settings" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Settings</a>
           <button id="signout-btn" type="button" data-i18n="portal_menu_sign_out" class="block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-100">
             Sign out
@@ -34,7 +34,7 @@
     <section id="portal-loading" data-i18n="portal_loading" class="py-16 text-center text-slate-500">Loading your account...</section>
 
     <!-- Error -->
-    <section id="portal-error" class="hidden rounded-2xl bg-white p-8 text-center shadow-lg">
+    <section id="portal-error" class="hidden rounded-2xl bg-[var(--card-bg)] p-8 text-center shadow-lg">
       <p id="portal-error-message" class="text-red-600"></p>
       <a href="/assets/html/sign-in.html" data-i18n="portal_go_sign_in" class="mt-4 inline-block font-semibold text-indigo-600 hover:underline">Go to sign in</a>
     </section>
@@ -48,7 +48,7 @@
         <p data-i18n="portal_welcome" class="text-slate-500">Welcome to this website.</p>
       </div>
 
-      <a href="/assets/html/settings.html" class="block rounded-2xl bg-white p-6 shadow-lg hover:ring-2 hover:ring-indigo-200">
+      <a href="/assets/html/settings.html" class="block rounded-2xl bg-[var(--card-bg)] p-6 shadow-lg hover:ring-2 hover:ring-indigo-200">
         <h2 data-i18n="portal_settings_title" class="text-lg font-semibold">Settings</h2>
         <p data-i18n="portal_settings_description" class="mt-1 text-sm text-slate-500">Choose what you want to change.</p>
       </a>
@@ -66,5 +66,6 @@
 
   <script type="module" src="/assets/js/pages/client-portal.js"></script>
   <script type="module" src="/assets/js/ui/logo.js"></script>
+  <script type="module" src="/assets/js/ui/theme.js"></script>
 </body>
 </html>

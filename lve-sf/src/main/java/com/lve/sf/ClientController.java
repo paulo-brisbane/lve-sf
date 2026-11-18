@@ -36,7 +36,9 @@ public class ClientController {
 
 	public record LanguageRequest(String language) {}
 
-	public record SettingsRequest(String avatar, String language, String theme) {}
+	public record ColourRequest(String colour) {}
+
+	public record SettingsRequest(String avatar, String language, String theme, String colour) {}
 
 	// Endpoints
 
@@ -97,6 +99,18 @@ public class ClientController {
 		return ResponseEntity.ok(ClientResponse.from(client));
 	}
 
+	@PutMapping("/me/colour")
+	public ResponseEntity<ClientResponse> updateColour(@RequestBody ColourRequest request,
+	                                                   HttpServletRequest httpRequest) {
+		HttpSession session = httpRequest.getSession(false);
+		if (session == null || !(session.getAttribute(SESSION_CLIENT_REF) instanceof String ref)) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+
+		Client client = clientService.updateColour(ref, request.colour());
+		return ResponseEntity.ok(ClientResponse.from(client));
+	}
+
 	@GetMapping("/me/settings")
 	public ResponseEntity<Map<String, String>> getSettings(HttpServletRequest httpRequest) {
 		HttpSession session = httpRequest.getSession(false);
@@ -105,7 +119,7 @@ public class ClientController {
 		}
 
 		return clientService.signIn(ref)
-				.map(client -> ResponseEntity.ok(settingsBody(client.getLanguage())))
+				.map(client -> ResponseEntity.ok(settingsBody(client)))
 				.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
 	}
 
@@ -124,12 +138,20 @@ public class ClientController {
 			client = clientService.updateLanguage(ref, request.language());
 		}
 
+		if (request.colour() != null) {
+			client = clientService.updateColour(ref, request.colour());
+		}
+
 		// TODO: persist avatar and theme once the Client entity has columns for them.
-		return ResponseEntity.ok(settingsBody(client.getLanguage()));
+		return ResponseEntity.ok(settingsBody(client));
 	}
 
-	private static Map<String, String> settingsBody(String language) {
-		return Map.of("language", language, "avatar", "indigo", "theme", "system");
+	private static Map<String, String> settingsBody(Client client) {
+		return Map.of(
+				"language", client.getLanguage(),
+				"colour", client.getColour(),
+				"avatar", "indigo",
+				"theme", "system");
 	}
 
 	// Error mapping

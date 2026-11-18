@@ -17,6 +17,9 @@ public class ClientService {
 	private static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private static final String DIGITS = "0123456789";
 	private static final Set<String> SUPPORTED_LANGUAGES = Set.of("en-GB", "pt-BR", "es-AR");
+	private static final Set<String> SUPPORTED_COLOURS = Set.of(
+			"red", "red-violet", "violet", "blue-violet", "blue", "blue-green",
+			"green", "yellow-green", "yellow", "yellow-orange", "orange", "orange-red");
 
 	private final ClientRepository clientRepository;
 	private final SecureRandom random = new SecureRandom();
@@ -56,6 +59,17 @@ public class ClientService {
 		Client client = clientRepository.findByClientRef(clientRef)
 				.orElseThrow(() -> new NoSuchElementException("Client not found"));
 		client.setLanguage(language);
+		return clientRepository.save(client);
+	}
+
+	@Transactional
+	public Client updateColour(String clientRef, String colour) {
+		if (colour == null || !SUPPORTED_COLOURS.contains(colour)) {
+			throw new IllegalArgumentException("Unsupported colour: " + colour);
+		}
+		Client client = clientRepository.findByClientRef(clientRef)
+				.orElseThrow(() -> new NoSuchElementException("Client not found"));
+		client.setColour(colour);
 		return clientRepository.save(client);
 	}
 

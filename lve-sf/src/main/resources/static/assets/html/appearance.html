@@ -8,9 +8,9 @@
   <script>tailwind.config = { darkMode: "class" };</script>
   <link rel="stylesheet" href="/assets/css/base.css">
 </head>
-<body class="invisible min-h-screen bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-100">
+<body class="invisible min-h-screen text-slate-800 dark:text-slate-100">
 
-  <header class="bg-white shadow-sm dark:bg-slate-800">
+  <header class="site-header shadow-sm">
     <div class="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
       <div id="site-logo" class="flex items-baseline gap-1 font-bold tracking-tight"></div>
       <a href="/assets/html/settings.html" class="text-sm font-medium text-slate-600 hover:text-indigo-600 dark:text-slate-300">
@@ -20,24 +20,84 @@
   </header>
 
   <main class="mx-auto max-w-4xl p-6">
-    <section class="rounded-2xl bg-white p-6 shadow-lg dark:bg-slate-800 space-y-6">
+    <section class="rounded-2xl bg-[var(--card-bg)] p-6 shadow-lg dark:bg-slate-800 space-y-6">
       <div>
         <h1 data-i18n="appearance_title" class="text-2xl font-semibold">Appearance</h1>
         <p data-i18n="appearance_description" class="text-sm text-slate-500 dark:text-slate-400">Choose how the portal looks.</p>
       </div>
 
+
       <fieldset class="space-y-3">
-        <legend data-i18n="appearance_theme_legend" class="mb-2 text-sm font-medium">Theme</legend>
-        <label class="flex items-center gap-3"><input type="radio" name="theme" value="system" class="h-4 w-4 accent-indigo-600"> <span data-i18n="appearance_system">System</span></label>
-        <label class="flex items-center gap-3"><input type="radio" name="theme" value="light" class="h-4 w-4 accent-indigo-600"> <span data-i18n="appearance_light">Light</span></label>
-        <label class="flex items-center gap-3"><input type="radio" name="theme" value="dark" class="h-4 w-4 accent-indigo-600"> <span data-i18n="appearance_dark">Dark</span></label>
+        <legend data-i18n="appearance_colour_legend" class="mb-2 text-sm font-medium">Colour</legend>
+        <div class="grid grid-cols-6 gap-4">
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="red" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-red-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_red" class="text-xs">Red</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="red-violet" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-fuchsia-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_red_violet" class="text-xs">Red-violet</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="violet" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-violet-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_violet" class="text-xs">Violet</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="blue-violet" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-indigo-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_blue_violet" class="text-xs">Blue-violet</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="blue" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-blue-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_blue" class="text-xs">Blue</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="blue-green" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-teal-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_blue_green" class="text-xs">Blue-green</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="green" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-green-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_green" class="text-xs">Green</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="yellow-green" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-lime-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_yellow_green" class="text-xs">Yellow-green</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="yellow" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-yellow-400 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_yellow" class="text-xs">Yellow</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="yellow-orange" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-amber-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_yellow_orange" class="text-xs">Yellow-orange</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="orange" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-orange-500 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_orange" class="text-xs">Orange</span>
+          </label>
+          <label class="flex flex-col items-center gap-2 cursor-pointer">
+            <input type="radio" name="colour" value="orange-red" class="peer sr-only">
+            <span class="h-10 w-10 rounded-full bg-[#ff4d1f] peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-slate-800 peer-focus-visible:ring-2 dark:peer-checked:ring-slate-100"></span>
+            <span data-i18n="colour_orange_red" class="text-xs">Orange-red</span>
+          </label>
+        </div>
       </fieldset>
 
       <div class="flex items-center justify-end gap-4 border-t border-slate-200 pt-6 dark:border-slate-700">
         <p id="save-status" role="status" class="hidden text-sm"></p>
         <button id="save-btn" type="button" data-i18n="save"
-          class="rounded-lg bg-indigo-600 px-5 py-2 font-semibold text-white hover:bg-indigo-700 disabled:opacity-50">
-          Save  (Not working yet)
+          class="rounded-lg bg-[var(--button-bg)] px-5 py-2 font-semibold text-white hover:bg-[var(--hover-bg)] disabled:opacity-50">
+          Save
         </button>
       </div>
     </section>
@@ -50,7 +110,10 @@
     <span id="msg-connection-error" data-i18n="connection_error">Connection error. Check your network and try again.</span>
   </div>
 
+  <script type="module">
+  </script>
   <script type="module" src="/assets/js/pages/appearance.js"></script>
   <script type="module" src="/assets/js/ui/logo.js"></script>
+  <script type="module" src="/assets/js/ui/theme.js"></script>
 </body>
 </html>

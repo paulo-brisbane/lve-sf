@@ -9,14 +9,15 @@ const LOGO = {
   image: null,
   alt: "LVE SF",
   imageClass: "h-8 w-auto",
-  main: { text: "LVE", class: "text-3xl text-indigo-600" },
+  main: { text: "LVE", class: "text-3xl", color:"var(--button-bg, #4f46e5)" },
   sub: { text: "SF", class: "text-sm text-slate-500" },
 };
 
-function createSpan({ text, class: className }) {
+function createSpan({ text, class: className, color }) {
   const span = document.createElement("span");
   span.className = className;
   span.textContent = text;
+  if (color) span.style.color = color;
   return span;
 }
 
