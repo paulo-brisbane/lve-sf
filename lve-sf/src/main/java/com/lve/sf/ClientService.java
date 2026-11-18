@@ -3,6 +3,7 @@ package com.lve.sf;
 import java.security.SecureRandom;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +16,8 @@ public class ClientService {
 	private static final int MAX_NICKNAME_LENGTH = 30;
 	private static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private static final String DIGITS = "0123456789";
+	private static final Set<String> SUPPORTED_LANGUAGES = Set.of("en-GB", "pt-BR", "es-AR");
 
-	
 	private final ClientRepository clientRepository;
 	private final SecureRandom random = new SecureRandom();
 
@@ -44,7 +45,18 @@ public class ClientService {
 
 	@Transactional(readOnly = true)
 	public Optional<Client> findById(Integer clientId) {
-	    return clientRepository.findById(clientId);
+		return clientRepository.findById(clientId);
+	}
+
+	@Transactional
+	public Client updateLanguage(String clientRef, String language) {
+		if (language == null || !SUPPORTED_LANGUAGES.contains(language)) {
+			throw new IllegalArgumentException("Unsupported language: " + language);
+		}
+		Client client = clientRepository.findByClientRef(clientRef)
+				.orElseThrow(() -> new NoSuchElementException("Client not found"));
+		client.setLanguage(language);
+		return clientRepository.save(client);
 	}
 
 	private String validateNickname(String nickname) {

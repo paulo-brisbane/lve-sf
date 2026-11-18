@@ -34,6 +34,9 @@ public class Client {
 	@Column(name = "nickname", length = 30)
 	private String nickname;
 	
+	@Column(name = "language", length = 10, nullable = false)
+	private String language = "en-GB";
+	
 	@Generated(event = EventType.INSERT)
 	@Column(name = "created_at", nullable = false, insertable = false, updatable = false)
 	private Instant createdAt;
@@ -67,6 +70,14 @@ public class Client {
 		this.nickname = nickname;
 	}	
 
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
 	public Instant getCreatedAt() {
 		return createdAt;
 	}

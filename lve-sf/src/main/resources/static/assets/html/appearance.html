@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appearance</title>
+  <script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
+  <script>tailwind.config = { darkMode: "class" };</script>
+  <link rel="stylesheet" href="/assets/css/base.css">
+</head>
+<body class="invisible min-h-screen bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-100">
+
+  <header class="bg-white shadow-sm dark:bg-slate-800">
+    <div class="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
+      <div id="site-logo" class="flex items-baseline gap-1 font-bold tracking-tight"></div>
+      <a href="/assets/html/settings.html" class="text-sm font-medium text-slate-600 hover:text-indigo-600 dark:text-slate-300">
+        <span>&larr;</span> <span data-i18n="back_to_settings">Back to settings</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl p-6">
+    <section class="rounded-2xl bg-white p-6 shadow-lg dark:bg-slate-800 space-y-6">
+      <div>
+        <h1 data-i18n="appearance_title" class="text-2xl font-semibold">Appearance</h1>
+        <p data-i18n="appearance_description" class="text-sm text-slate-500 dark:text-slate-400">Choose how the portal looks.</p>
+      </div>
+
+      <fieldset class="space-y-3">
+        <legend data-i18n="appearance_theme_legend" class="mb-2 text-sm font-medium">Theme</legend>
+        <label class="flex items-center gap-3"><input type="radio" name="theme" value="system" class="h-4 w-4 accent-indigo-600"> <span data-i18n="appearance_system">System</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="theme" value="light" class="h-4 w-4 accent-indigo-600"> <span data-i18n="appearance_light">Light</span></label>
+        <label class="flex items-center gap-3"><input type="radio" name="theme" value="dark" class="h-4 w-4 accent-indigo-600"> <span data-i18n="appearance_dark">Dark</span></label>
+      </fieldset>
+
+      <div class="flex items-center justify-end gap-4 border-t border-slate-200 pt-6 dark:border-slate-700">
+        <p id="save-status" role="status" class="hidden text-sm"></p>
+        <button id="save-btn" type="button" data-i18n="save"
+          class="rounded-lg bg-indigo-600 px-5 py-2 font-semibold text-white hover:bg-indigo-700 disabled:opacity-50">
+          Save  (Not working yet)
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Hidden strings used by the script. loadLanguage() translates them. -->
+  <div hidden>
+    <span id="msg-saved" data-i18n="saved">Saved.</span>
+    <span id="msg-save-error" data-i18n="save_error">Could not save. Try again.</span>
+    <span id="msg-connection-error" data-i18n="connection_error">Connection error. Check your network and try again.</span>
+  </div>
+
+  <script type="module" src="/assets/js/pages/appearance.js"></script>
+  <script type="module" src="/assets/js/ui/logo.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Language</title>
+  <script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
+  <script>tailwind.config = { darkMode: "class" };</script>
+  <link rel="stylesheet" href="/assets/css/base.css">
+</head>
+<body class="invisible min-h-screen bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-100">
+
+  <header class="bg-white shadow-sm dark:bg-slate-800">
+    <div class="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
+      <div id="site-logo" class="flex items-baseline gap-1 font-bold tracking-tight"></div>
+      <a href="/assets/html/settings.html" class="text-sm font-medium text-slate-600 hover:text-indigo-600 dark:text-slate-300">
+        <span>&larr;</span> <span data-i18n="back_to_settings">Back to settings</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl p-6">
+    <section class="rounded-2xl bg-white p-6 shadow-lg dark:bg-slate-800 space-y-6">
+      <div>
+        <h1 data-i18n="language_title" class="text-2xl font-semibold">Language</h1>
+        <p data-i18n="language_description" class="text-sm text-slate-500 dark:text-slate-400">Choose the language for the portal.</p>
+      </div>
+
+      <div>
+        <label for="language-select" data-i18n="language_label" class="mb-1 block text-sm font-medium">Language</label>
+        <select id="language-select"
+          class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:border-slate-600 dark:bg-slate-700">
+          <option value="en-GB">English (UK)</option>
+          <option value="pt-BR">Português (Brasil)</option>
+          <option value="es-AR">Español (Argentina)</option>
+        </select>
+      </div>
+
+      <div class="flex items-center justify-end gap-4 border-t border-slate-200 pt-6 dark:border-slate-700">
+        <p id="save-status" role="status" class="hidden text-sm"></p>
+        <button id="save-btn" type="button" data-i18n="save"
+          class="rounded-lg bg-indigo-600 px-5 py-2 font-semibold text-white hover:bg-indigo-700 disabled:opacity-50">
+          Save
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/assets/js/pages/language.js"></script>
+  <script type="module" src="/assets/js/ui/logo.js"></script>
+</body>
+</html>

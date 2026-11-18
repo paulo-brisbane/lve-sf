@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account</title>
+  <link rel="stylesheet" href="/assets/css/base.css">
+</head>
+<body class="min-h-screen bg-slate-100 flex items-center justify-center p-4 text-slate-800">
+
+  <main class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6">
+    <div>
+      <a href="/index.html" class="text-sm text-indigo-600 hover:underline">&larr; Back</a>
+      <h1 class="mt-2 text-2xl font-bold">Create account</h1>
+      <p class="text-slate-500">Choose a nickname (2 to 30 characters). You will receive a client reference.</p>
+    </div>
+
+    <form id="create-form" class="space-y-4" novalidate>
+      <div>
+        <label for="create-nickname" class="block text-sm font-medium mb-1">Nickname</label>
+        <input id="create-nickname" name="nickname" type="text" minlength="2" maxlength="30" required
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200">
+      </div>
+      <p id="create-error" class="hidden text-sm text-red-600"></p>
+      <button type="submit" id="create-submit"
+        class="w-full rounded-lg bg-indigo-600 py-3 font-semibold text-white hover:bg-indigo-700 disabled:opacity-50">
+        Create account
+      </button>
+    </form>
+
+    <div id="create-success" class="hidden space-y-4 rounded-lg border border-emerald-300 bg-emerald-50 p-4">
+      <p class="font-semibold text-emerald-800">Account created.</p>
+      <p class="text-sm text-slate-700">Your client reference is:</p>
+      <p id="new-client-ref" class="text-center font-mono text-2xl font-bold tracking-widest"></p>
+      <p class="text-sm text-slate-700">Save this number. You will need it to sign in.</p>
+      <a href="/assets/html/sign-in.html"
+        class="block w-full rounded-lg bg-indigo-600 py-3 text-center font-semibold text-white hover:bg-indigo-700">
+        Go to sign in
+      </a>
+    </div>
+  </main>
+
+  <script type="module" src="/assets/js/pages/create-account.js"></script>
+</body>
+</html>
